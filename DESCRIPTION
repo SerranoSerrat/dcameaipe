@@ -1,0 +1,38 @@
+Package: dcameaipe
+Title: Estimation of Average Interactive Partial Effects (AIPE) and Difference in Conditional Average Marginal Effects (D-CAME)
+Version: 0.1.0
+Authors@R:
+    person("Jordi", "Serrano-Serrat",
+           email = "jserranoserrat@gmail.com",
+           role  = c("aut", "cre"))
+Description: Companion package to Serrano-Serrat,
+    "The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests".
+    Provides the function dcame_aipe() for estimating the Average Interactive
+    Partial Effect (AIPE) and the Difference in Conditional Average Marginal
+    Effects (D-CAME) under flexible (polynomial / B-spline / GAM) functional
+    forms for the treatment-by-moderator interaction. Supports robust and
+    cluster-robust inference, survey weights, fixed effects, common-support
+    trimming, cross-fit and bootstrap standard errors, and a clean comparison
+    to the conventional linear interaction estimator. Produces diagnostic
+    plots and export-ready tables.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+Depends:
+    R (>= 4.0)
+Imports:
+    stats,
+    utils,
+    tools,
+    grid,
+    splines,
+    sandwich,
+    ggplot2,
+    gridExtra,
+    mgcv
+Suggests:
+    openxlsx,
+    fixest
+URL: https://github.com/jordiserranoserrat/dcameaipe
+BugReports: https://github.com/jordiserranoserrat/dcameaipe/issues
+Config/roxygen2/version: 8.0.0

@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+*.RData
+.Ruserdata
+Rplots.pdf
+*.Rcheck
+*.tar.gz
+.claude/
