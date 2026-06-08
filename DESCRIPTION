@@ -6,7 +6,8 @@ Authors@R:
            email = "jserranoserrat@gmail.com",
            role  = c("aut", "cre"))
 Description: Companion package to Serrano-Serrat,
-    "The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests".
+    "The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests",
+    Sociological Science (2026).
     Provides the function dcame_aipe() for estimating the Average Interactive
     Partial Effect (AIPE) and the Difference in Conditional Average Marginal
     Effects (D-CAME) under flexible (polynomial / B-spline / GAM) functional

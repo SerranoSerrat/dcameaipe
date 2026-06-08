@@ -5,8 +5,8 @@
 # the shared results renderer .render_results(), S3 print/summary
 # methods, and the export-table helper dcame_aipe_table().
 #
-# Companion to: "The Pitfalls of Assuming Linear Treatment Effects
-#                in Interaction Tests" (Serrano-Serrat).
+# Companion to: Serrano-Serrat, "The Pitfalls of Assuming Linear Treatment
+#                Effects in Interaction Tests", Sociological Science (2026).
 #
 # Model: Y = mu + alpha'f_0(D)*(1-X) + alpha'f_1(D)*X + eta*X
 #            + delta'Z + e
@@ -24,7 +24,8 @@ utils::globalVariables(c(
 #' Estimate DCAME and AIPE for interactive treatment effects
 #'
 #' Implements the empirical approach from Serrano-Serrat,
-#' *The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests*.
+#' *The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests*,
+#' *Sociological Science*, 2026.
 #' Fits the K-group joint model
 #' \deqn{Y_i = \sum_{k=0}^{K-1} \big\{ \mu_k + f_k(D_i) + \alpha_k X_i \big\} G_{k,i}
 #'              + \delta' Z_i + \mathrm{FE} + \varepsilon_i,}

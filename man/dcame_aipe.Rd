@@ -167,7 +167,8 @@ Ready-to-print \code{ggplot} / \code{gtable} objects.}
 }
 \description{
 Implements the empirical approach from Serrano-Serrat,
-\emph{The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests}.
+\emph{The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests},
+\emph{Sociological Science}, 2026.
 Fits the K-group joint model
 \deqn{Y_i = \sum_{k=0}^{K-1} \big\{ \mu_k + f_k(D_i) + \alpha_k X_i \big\} G_{k,i}
              + \delta' Z_i + \mathrm{FE} + \varepsilon_i,}
