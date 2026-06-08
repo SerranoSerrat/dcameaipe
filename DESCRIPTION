@@ -14,7 +14,8 @@ Description: Companion package to Serrano-Serrat,
     cluster-robust inference, survey weights, fixed effects, common-support
     trimming, cross-fit and bootstrap standard errors, and a clean comparison
     to the conventional linear interaction estimator. Produces diagnostic
-    plots and export-ready tables.
+    plots and export-ready tables. This package was enhanced and optimized
+    using Claude Opus 4.7 and 4.8.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
@@ -33,6 +34,6 @@ Imports:
 Suggests:
     openxlsx,
     fixest
-URL: https://github.com/jordiserranoserrat/dcameaipe
-BugReports: https://github.com/jordiserranoserrat/dcameaipe/issues
+URL: https://github.com/SerranoSerrat/dcameaipe
+BugReports: https://github.com/SerranoSerrat/dcameaipe/issues
 Config/roxygen2/version: 8.0.0

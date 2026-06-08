@@ -1,6 +1,6 @@
 # dcameaipe
 
-[![R-CMD-check](https://github.com/jordiserranoserrat/dcameaipe/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/jordiserranoserrat/dcameaipe/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/SerranoSerrat/dcameaipe/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/SerranoSerrat/dcameaipe/actions/workflows/R-CMD-check.yaml)
 
 Estimation of the **Average Interactive Partial Effect (AIPE)** and the
 **Difference in Conditional Average Marginal Effects (D-CAME)** for interactive
@@ -10,11 +10,13 @@ forms for the treatment-by-moderator interaction.
 Companion package to Serrano-Serrat,
 *The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests*.
 
+> This package was enhanced and optimized using Claude Opus 4.7 and 4.8.
+
 ## Installation
 
 ```r
 # install.packages("remotes")
-remotes::install_github("jordiserranoserrat/dcameaipe")
+remotes::install_github("SerranoSerrat/dcameaipe")
 ```
 
 Optional dependency `fixest` (only needed for `Z_FE_absorb = TRUE`):

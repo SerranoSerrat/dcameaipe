@@ -10,6 +10,8 @@
 #
 # Model: Y = mu + alpha'f_0(D)*(1-X) + alpha'f_1(D)*X + eta*X
 #            + delta'Z + e
+#
+# This code has been enhanced and optimized using Claude Opus 4.7 and 4.8.
 # ============================================================
 
 # Silence R CMD check NOTEs for ggplot2 NSE column references.
@@ -1875,9 +1877,15 @@ dcame_aipe <- function(data, Y, D, X, Z = NULL,
       grp0_label <- "X = 0"
       grp1_label <- "X = 1"
     }
+  } else if (model == "GAM") {
+    # GAM passes the representative low/high moderator values (x_lo, x_hi).
+    grp0_label <- sprintf("X = %.3g (low)",  tercile_cuts[1])
+    grp1_label <- sprintf("X = %.3g (high)", tercile_cuts[length(tercile_cuts)])
   } else {
-    grp0_label <- sprintf("X = %.3g (low)", tercile_cuts[1])
-    grp1_label <- sprintf("X = %.3g (high)", tercile_cuts[2])
+    # Basis path passes the K-1 internal cut-points. The low group is the
+    # bottom bin (X <= first cut); the high group is the top bin (X > last cut).
+    grp0_label <- sprintf("X <= %.3g (low)", tercile_cuts[1])
+    grp1_label <- sprintf("X > %.3g (high)", tercile_cuts[length(tercile_cuts)])
   }
 
   dfp <- data.frame(

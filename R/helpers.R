@@ -3,6 +3,8 @@
 #
 # Internal helpers used by both the basis path and the GAM path
 # of dcame_aipe(). Not exported.
+#
+# This code has been enhanced and optimized using Claude Opus 4.7 and 4.8.
 # ============================================================
 
 #' Place interior knots for a spline basis
@@ -78,7 +80,18 @@ spec_label <- function(s) {
 #' @keywords internal
 #' @noRd
 parse_spline_spec <- function(s, type = "bspline") {
-  p <- as.integer(strsplit(s, ",")[[1]])
+  parts <- strsplit(s, ",")[[1]]
+  p <- suppressWarnings(as.integer(parts))
+  if (length(p) != 2L || any(is.na(p)))
+    stop(sprintf(
+      "Invalid spline specification '%s'. Expected a 'knots,degree' string of two integers, e.g. \"3,3\" for 3 interior knots and degree 3.",
+      s), call. = FALSE)
+  if (p[1] < 0L)
+    stop(sprintf("Invalid spline specification '%s': the number of interior knots must be >= 0.", s),
+         call. = FALSE)
+  if (p[2] < 1L)
+    stop(sprintf("Invalid spline specification '%s': the spline degree must be >= 1.", s),
+         call. = FALSE)
   list(type = type, knots = p[1], degree = p[2], knot_strategy = "quantile")
 }
 
@@ -89,7 +102,7 @@ parse_spline_spec <- function(s, type = "bspline") {
 #' Weighted kernel density estimator
 #' @keywords internal
 #' @noRd
-weighted_kde <- function(d_values, wgts = NULL, bw_method = "SJ") {
+weighted_kde <- function(d_values, wgts = NULL) {
   if (is.null(wgts)) wgts <- rep(1, length(d_values))
   wgts <- wgts / sum(wgts) * length(d_values)
   bw <- tryCatch(

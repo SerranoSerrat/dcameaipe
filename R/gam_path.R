@@ -9,6 +9,8 @@
 # dcame_aipe() function when model = "GAM".
 #
 # All functions are internal.
+#
+# This code has been enhanced and optimized using Claude Opus 4.7 and 4.8.
 # ============================================================
 
 #' Fit GAM and return all estimands of interest on a grid
@@ -49,7 +51,7 @@
   K_g <- if (x_is_bin) 2L else as.integer(n_parts)
 
   # Continuous X: attach the K-group factor for use in Z*g_fac interactions
-  # (4G: controls interact with moderator GROUPS, not raw X).
+  # (controls interact with the moderator GROUPS, not raw X).
   if (!x_is_bin && !is.null(g_loc)) {
     df_fit$g_fac <- factor(g_loc, levels = 0:(K_g - 1L))
   }
@@ -74,8 +76,8 @@
     if (z_interact && x_is_bin) {
       z_rhs <- paste(sprintf("`%s` * x_factor", z_names), collapse = " + ")
     } else if (z_interact && !x_is_bin) {
-      # 4G: For continuous X, interact controls with the K-group factor g_fac
-      # (matches the basis path's Z_g{k} blocks), not with raw X_mod.
+      # For continuous X, interact controls with the K-group factor g_fac
+      # (the same grouping used for the Z_g{k} blocks), not with raw X_mod.
       if (is.null(df_fit$g_fac)) {
         warning("Z_interact = TRUE with continuous X but no group factor available; ",
                 "falling back to additive Z without interaction.", call. = FALSE)
@@ -100,7 +102,7 @@
     mgcv::gam(form, data = df_fit, method = gam_method)
   }
 
-  # 2E: weighted means of Z for prediction-frame Z-bar.
+  # Weighted means of Z for the prediction-frame Z-bar.
   .wmean_col <- function(v, w) {
     if (is.null(w)) mean(v, na.rm = TRUE)
     else stats::weighted.mean(v, w = w, na.rm = TRUE)
@@ -111,7 +113,7 @@
            numeric(1)) else NULL
   if (!is.null(z_bar)) names(z_bar) <- z_names
 
-  # 2E: weighted mode for FE prediction-frame levels.
+  # Weighted mode for FE prediction-frame levels.
   fe_modes <- list()
   if (length(fe_names) > 0) {
     for (v in fe_names) {
@@ -127,7 +129,7 @@
 
   # ── Build prediction frame ─────────────────────────────────────────────
   # gv: optional group index (0..K-1) used to set g_fac in the prediction frame.
-  # If NULL, default to bin matching xv via quantile cut (back-compat).
+  # If NULL, default to the bin matching xv via quantile cut.
   .make_pred_df <- function(dv, xv, gv = NULL) {
     out <- data.frame(D_treat = dv, X_mod = rep(xv, length(dv)))
     if (x_is_bin) {
@@ -153,8 +155,8 @@
     out
   }
 
-  # 3A/3D: identify low- and high-bin observations using the K-group factor
-  # (n_parts-based binning), not hardcoded terciles.
+  # Identify low- and high-bin observations using the K-group factor
+  # (n_parts-based binning).
   if (x_is_bin) {
     idx_low <- which(x_raw == 0)
     idx_high <- which(x_raw == 1)
@@ -280,7 +282,7 @@
   z_names <- if (!is.null(z_mat) && ncol(z_mat) > 0) colnames(z_mat) else character(0)
   fe_names <- if (!is.null(fe_vars) && length(fe_vars) > 0) fe_vars else character(0)
 
-  # 2E: weighted Z-bar and FE modes
+  # Weighted Z-bar and FE modes
   .wmean_col2 <- function(v, w) {
     if (is.null(w)) mean(v, na.rm = TRUE)
     else stats::weighted.mean(v, w = w, na.rm = TRUE)
@@ -365,7 +367,7 @@
   Sg0_obs <- .get_slope_Lp(d, x_lo,  g_low)
   Sg1_obs <- .get_slope_Lp(d, x_hi, g_high)
 
-  # 3A/3D: bin observations by g_loc (n_parts-based), not by hardcoded terciles.
+  # Bin observations by g_loc (n_parts-based binning).
   if (x_is_bin) {
     idx_low  <- which(x_raw == 0)
     idx_high <- which(x_raw == 1)
@@ -565,7 +567,7 @@
     p_hi <- (2 * n_parts - 1) / (2 * n_parts)
     qs <- stats::quantile(x_raw, probs = c(p_lo, p_hi), na.rm = TRUE)
     x_lo <- as.numeric(qs[1]); x_hi <- as.numeric(qs[2])
-    # 3A/3D: K-group factor by n_parts quantiles (matches the basis path).
+    # K-group factor by n_parts quantiles (same grouping as the basis path).
     cut_probs_gam <- seq(0, 1, length.out = as.integer(n_parts) + 1L)[
       -c(1L, as.integer(n_parts) + 1L)]
     cuts_gam <- as.numeric(stats::quantile(x_raw, probs = cut_probs_gam, na.rm = TRUE))
@@ -647,7 +649,22 @@
     }
   } else {
     nt <- 0L
+    warning(
+      "model = 'GAM' with a continuous moderator does not apply common-support ",
+      "trimming. The fitted curves, slopes, and the AIPE / D-CAME contrasts are ",
+      "evaluated over the full observed range of D for both the low and high ",
+      "moderator groups, so they may extrapolate into regions where one group has ",
+      "little or no data. Inspect the rug / percentile annotations on the ",
+      "predicted-values plot, and consider model = 'basis' (which trims to the ",
+      "common support of group 0 and group K-1) if extrapolation is a concern.",
+      call. = FALSE)
   }
+
+  # Clamp the AIPE integration support to [cs_lo, cs_hi]. For binary X this is
+  # the trimmed common-support overlap (no extrapolation beyond it); for a
+  # continuous moderator cs_lo/cs_hi span the full observed D range, so this is
+  # a no-op there.
+  d_all_for_aipe <- pmin(pmax(d_all_for_aipe, cs_lo), cs_hi)
 
   n <- length(y)
   plo_pct <- round(100 / (2 * n_parts))
@@ -682,7 +699,7 @@
                              z_interact = Z_interact,
                              g_loc = g_full, n_parts = n_parts)
   } else {
-    # 2C: GAM analytic SEs use mgcv's Bayesian/frequentist posterior, which
+    # GAM analytic SEs use mgcv's Bayesian/frequentist posterior, which
     # ignores within-cluster dependence. Surface this as a real warning so
     # users running with verbose = FALSE still see it.
     if (!is.null(cluster_var)) {
@@ -710,7 +727,7 @@
     d_obs_X1 <- d[x_raw == 1]
     x_plot <- x_raw
   } else {
-    # 3A/3D: use the n_parts K-group factor (g_full) consistently.
+    # Use the n_parts K-group factor (g_full) consistently.
     d_obs_X0 <- d[g_full == 0L]
     d_obs_X1 <- d[g_full == (as.integer(n_parts) - 1L)]
     # x_plot for the renderer's Linear comparison uses g_full directly (the
@@ -749,19 +766,37 @@
     # Reproduce the prediction-frame construction used inside .gam_fit_and_predict.
     z_names_g <- if (!is.null(z_mat) && ncol(z_mat) > 0) colnames(z_mat) else character(0)
     fe_names_g <- if (!is.null(fe_vars)) fe_vars else character(0)
-    z_bar_g <- if (length(z_names_g) > 0) colMeans(z_mat, na.rm = TRUE) else NULL
+    # Weighted Z-bar (survey weights when supplied).
+    z_bar_g <- if (length(z_names_g) > 0) {
+      vapply(seq_len(ncol(z_mat)), function(j) {
+        if (is.null(survey_wgts)) mean(z_mat[, j], na.rm = TRUE)
+        else stats::weighted.mean(z_mat[, j], w = survey_wgts, na.rm = TRUE)
+      }, numeric(1))
+    } else NULL
+    if (!is.null(z_bar_g)) names(z_bar_g) <- z_names_g
     df_fit_ref_g <- data.frame(Y_out = y, D_treat = d, X_mod = x_raw)
     if (length(z_names_g) > 0) df_fit_ref_g <- cbind(df_fit_ref_g, z_mat)
     if (length(fe_names_g) > 0)
       for (v in fe_names_g) df_fit_ref_g[[v]] <- factor(fe_data[[v]])
+    # Weighted FE mode (survey weights when supplied).
     fe_modes_g <- list()
     if (length(fe_names_g) > 0)
       for (v in fe_names_g) {
-        tb <- table(df_fit_ref_g[[v]])
-        fe_modes_g[[v]] <- names(tb)[which.max(tb)]
+        if (!is.null(survey_wgts)) {
+          agg <- tapply(survey_wgts, df_fit_ref_g[[v]], sum, default = 0)
+          fe_modes_g[[v]] <- names(agg)[which.max(agg)]
+        } else {
+          tb <- table(df_fit_ref_g[[v]])
+          fe_modes_g[[v]] <- names(tb)[which.max(tb)]
+        }
       }
-    .pred_df_g <- function(dv, xv) {
+    # The fitted GAM carries a g_fac term when Z_interact = TRUE; the prediction
+    # frame must supply it (at the group being evaluated) or predict() errors.
+    needs_gfac <- !is.null(fit$var.summary) && "g_fac" %in% names(fit$var.summary)
+    .pred_df_g <- function(dv, xv, gv = NULL) {
       out <- data.frame(D_treat = dv, X_mod = rep(xv, length(dv)))
+      if (needs_gfac && !is.null(gv))
+        out$g_fac <- factor(rep(gv, length(dv)), levels = 0:(K_gam - 1L))
       if (length(z_names_g) > 0)
         for (nm in z_names_g) out[[nm]] <- z_bar_g[nm]
       if (length(fe_names_g) > 0)
@@ -771,9 +806,9 @@
       out
     }
     h_g <- diff(range(d)) / 1e5
-    .slope_at_g <- function(dv, xv) {
-      p_up <- stats::predict(fit, newdata = .pred_df_g(dv + h_g, xv))
-      p_dn <- stats::predict(fit, newdata = .pred_df_g(dv - h_g, xv))
+    .slope_at_g <- function(dv, xv, gv = NULL) {
+      p_up <- stats::predict(fit, newdata = .pred_df_g(dv + h_g, xv, gv))
+      p_dn <- stats::predict(fit, newdata = .pred_df_g(dv - h_g, xv, gv))
       (as.numeric(p_up) - as.numeric(p_dn)) / (2 * h_g)
     }
 
@@ -804,7 +839,7 @@
         next
       }
       # Point estimate: average slope at x = x_mids[kk+1], over group k's D obs.
-      slope_obs_kk <- .slope_at_g(d[idx_kk], x_mids[kk + 1L])
+      slope_obs_kk <- .slope_at_g(d[idx_kk], x_mids[kk + 1L], kk)
       if (!is.null(survey_wgts)) {
         sw_kk <- survey_wgts[idx_kk] / sum(survey_wgts[idx_kk])
         came_vec[kk + 1L] <- sum(sw_kk * slope_obs_kk)
@@ -814,9 +849,9 @@
       # SE via posterior Lp matrix (analytic) — if not available, leave NA.
       se_vec[kk + 1L] <- NA_real_
       if (!is.null(fit$Vp)) {
-        Lp_up <- stats::predict(fit, newdata = .pred_df_g(d[idx_kk] + h_g, x_mids[kk + 1L]),
+        Lp_up <- stats::predict(fit, newdata = .pred_df_g(d[idx_kk] + h_g, x_mids[kk + 1L], kk),
                                 type = "lpmatrix")
-        Lp_dn <- stats::predict(fit, newdata = .pred_df_g(d[idx_kk] - h_g, x_mids[kk + 1L]),
+        Lp_dn <- stats::predict(fit, newdata = .pred_df_g(d[idx_kk] - h_g, x_mids[kk + 1L], kk),
                                 type = "lpmatrix")
         Sg_kk <- (Lp_up - Lp_dn) / (2 * h_g)
         Cb_kk <- if (!is.null(survey_wgts)) {
@@ -871,7 +906,7 @@
     nt = nt, n = n,
     n_grid = n_grid, hist_pv = hist_pv,
     inference = inference,
-    selection = paste0("GAM:", smooth),   # 3C: reflect actual smooth criterion
+    selection = paste0("GAM:", smooth),   # reflect the smooth-selection criterion
     Z_interact = Z_interact,
     FE = FE, FE_vbles = FE_vbles,
     wgt = wgt,
