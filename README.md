@@ -8,7 +8,8 @@ treatment effects, using flexible (polynomial / B-spline / GAM) functional
 forms for the treatment-by-moderator interaction.
 
 Companion package to Serrano-Serrat,
-*The Pitfalls of Assuming Linear Treatment Effects in Interaction Tests*,
+*Quantities of Interest for Interactions and the Pitfalls
+of Assuming Linear Treatment Effects*,
 *Sociological Science*, 2026.
 
 > This package was enhanced and optimized using Claude Opus 4.7 and 4.8.
