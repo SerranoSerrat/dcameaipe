@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Implications — dcameaipe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="applications.html">Applications</a></li>
+        <li><a href="implications.html">Implications</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Chapter 3</p>
+      <h1><span class="chapter-num">3</span>Implications</h1>
+      <p class="lede">
+        What follows once you accept that "the interaction effect" isn't always a
+        single well-defined number.
+      </p>
+
+      <div class="todo">
+        <strong>TODO —</strong> these are general implications reasoned from the
+        paper's framework, not claims from the paper's actual discussion section.
+        Tighten, cite specific results, or replace once you write this section for
+        real.
+      </div>
+
+      <h2><span class="section-num">3.1</span>For applied researchers</h2>
+      <p>
+        Before running an interaction model, it's worth writing down in one
+        sentence which comparison the research question actually calls for —
+        groups as they are, or groups on equal footing. If the two answers could
+        plausibly diverge (treatment is dose-like, and groups differ in typical
+        dose), a linear specification is a modeling choice that deserves a
+        justification, not a default.
+      </p>
+
+      <h2><span class="section-num">3.2</span>For reviewers and readers</h2>
+      <p>
+        A reported interaction coefficient is only as interpretable as the
+        assumption behind it. When treatment distributions differ across the
+        groups being compared, it's reasonable to ask an author which quantity —
+        dCAME or AIPE — the headline number corresponds to, and whether the
+        conclusion survives relaxing the linearity assumption.
+      </p>
+
+      <h2><span class="section-num">3.3</span>For policy-facing work</h2>
+      <p>
+        dCAME describes the world as it currently is: it's the right quantity for
+        summarizing an observed disparity. AIPE describes a counterfactual world
+        where exposure is equalized: it's the right quantity for predicting what
+        happens under a policy that changes who gets how much treatment. Using the
+        wrong one doesn't just introduce statistical bias — it can answer a
+        different policy question than the one being asked.
+      </p>
+
+      <h2><span class="section-num">3.4</span>Open questions</h2>
+      <p>TODO — note any limitations, scope conditions, or follow-up work here, e.g.:</p>
+      <ul class="content-list">
+        <li>TODO: how the approach extends beyond two groups / continuous moderators</li>
+        <li>TODO: performance under small-sample or sparse-support settings</li>
+        <li>TODO: relationship to other flexible interaction estimators in the literature</li>
+      </ul>
+
+      <div class="page-nav">
+        <a href="applications.html"><span class="dir">Previous</span>2 · Applications</a>
+        <span></span>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

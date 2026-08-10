@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Get Started — dcameaipe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="applications.html">Applications</a></li>
+        <li><a href="implications.html">Implications</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Chapter 1</p>
+      <h1><span class="chapter-num">1</span>Get Started</h1>
+      <p class="lede">Installation and a first model, end to end.</p>
+
+      <h2><span class="section-num">1.1</span>Installation</h2>
+      <p><strong>dcameaipe</strong> isn't on CRAN yet — install the development version from GitHub:</p>
+
+      <div class="code-block">
+        <pre><code><span class="tok-com"># install.packages("remotes")</span>
+remotes::<span class="tok-fn">install_github</span>(<span class="tok-str">"SerranoSerrat/dcameaipe"</span>)</code></pre>
+      </div>
+
+      <p>One dependency is optional and only needed if you plan to absorb high-cardinality fixed effects:</p>
+
+      <div class="code-block">
+        <pre><code><span class="tok-com"># only needed for Z_FE_absorb = TRUE</span>
+<span class="tok-fn">install.packages</span>(<span class="tok-str">"fixest"</span>)</code></pre>
+      </div>
+
+      <h2><span class="section-num">1.2</span>What the function fits</h2>
+      <p>
+        <code class="inline">dcame_aipe()</code> fits a K-group joint model where each
+        group gets its own flexible function of the treatment,
+        <code class="inline">f_k(D)</code> — either a polynomial / B-spline basis
+        (<code class="inline">model = "basis"</code>, the default) or a penalized GAM
+        smooth (<code class="inline">model = "GAM"</code>). For a continuous
+        moderator <code class="inline">X</code>, groups are formed by quantile bins
+        (<code class="inline">n_parts</code>, default 3); the headline dCAME and AIPE
+        contrast the first and last group.
+      </p>
+
+      <h2><span class="section-num">1.3</span>A first example</h2>
+      <p>Binary moderator, default settings:</p>
+
+      <div class="code-block">
+        <pre><code><span class="tok-fn">library</span>(dcameaipe)
+
+res &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data     = mydata,
+  Y        = <span class="tok-str">"wage"</span>,
+  D        = <span class="tok-str">"training_hours"</span>,   <span class="tok-com"># continuous treatment</span>
+  X        = <span class="tok-str">"union"</span>,            <span class="tok-com"># binary moderator (0/1)</span>
+  Z        = c(<span class="tok-str">"age"</span>, <span class="tok-str">"female"</span>), <span class="tok-com"># controls</span>
+  estimand = <span class="tok-str">"AIPE"</span>,
+  compare  = <span class="tok-str">"ALL"</span>               <span class="tok-com"># also show D-CAME and the linear-model comparison</span>
+)
+
+<span class="tok-fn">summary</span>(res)   <span class="tok-com"># data.frame of all estimands</span>
+res$plot        <span class="tok-com"># combined PV / IPE / coefficient plot</span></code></pre>
+      </div>
+
+      <p>Continuous moderator, fixed effects absorbed via <code class="inline">fixest</code>, cluster bootstrap:</p>
+
+      <div class="code-block">
+        <pre><code>res2 &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data         = mydata,
+  Y            = <span class="tok-str">"y"</span>,
+  D            = <span class="tok-str">"treatment"</span>,
+  X            = <span class="tok-str">"education"</span>,        <span class="tok-com"># continuous; binned into terciles</span>
+  Z            = c(<span class="tok-str">"age"</span>, <span class="tok-str">"female"</span>),
+  Z_FE         = c(<span class="tok-str">"country"</span>, <span class="tok-str">"year"</span>),
+  Z_FE_absorb  = TRUE,               <span class="tok-com"># high-cardinality FE -&gt; feols</span>
+  estimand     = <span class="tok-str">"AIPE"</span>,
+  compare      = <span class="tok-str">"ALL"</span>,
+  inference    = <span class="tok-str">"bootstrap"</span>,        <span class="tok-com"># cluster-bootstrap if `cluster` is supplied</span>
+  cluster      = <span class="tok-str">"country"</span>
+)</code></pre>
+      </div>
+
+      <h2><span class="section-num">1.4</span>Key arguments</h2>
+      <ul class="content-list">
+        <li><code class="inline">model</code> — <code class="inline">"basis"</code> (poly/B-spline, default) or <code class="inline">"GAM"</code> (mgcv penalized)</li>
+        <li><code class="inline">estimand</code> — <code class="inline">"AIPE"</code> or <code class="inline">"DCAME"</code> (required)</li>
+        <li><code class="inline">inference</code> — <code class="inline">"crossfit"</code> (default, basis only), <code class="inline">"bootstrap"</code>, or <code class="inline">"regular"</code></li>
+        <li><code class="inline">selection</code> — <code class="inline">"CV"</code> (default), <code class="inline">"BIC"</code>, or <code class="inline">"CV_targeted"</code> (AIPE-only)</li>
+        <li><code class="inline">compare</code> — <code class="inline">"LINEAR"</code>, <code class="inline">"DCAME"</code>, <code class="inline">"AIPE"</code>, or <code class="inline">"ALL"</code></li>
+      </ul>
+      <p>See <code class="inline">?dcame_aipe</code> for the full argument list, or the <a href="https://github.com/SerranoSerrat/dcameaipe">package README</a> for all three inference paths and the pitfalls the function warns about automatically.</p>
+
+      <div class="page-nav">
+        <span></span>
+        <a class="next" href="applications.html"><span class="dir">Next</span>2 · Applications</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

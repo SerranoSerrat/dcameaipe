@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applications — dcameaipe</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="applications.html">Applications</a></li>
+        <li><a href="implications.html">Implications</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Chapter 2</p>
+      <h1><span class="chapter-num">2</span>Applications</h1>
+      <p class="lede">
+        Where the dCAME/AIPE distinction actually bites — and what changes once you
+        stop assuming the treatment effect is a straight line.
+      </p>
+
+      <div class="todo">
+        <strong>TODO —</strong> the scenarios below are generic illustrations meant
+        to show the shape of the argument, not a summary of your paper's actual
+        empirical application. Swap in your real case study (and its real numbers)
+        when ready.
+      </div>
+
+      <h2><span class="section-num">2.1</span>Why the quantity of interest needs to be named</h2>
+      <p>
+        Most applied papers estimate a linear interaction model, look at the
+        coefficient on the product term, and report it as "the" effect of group
+        membership on the treatment-outcome relationship. That coefficient is
+        actually only correct for one specific comparison — and it happens to be a
+        comparison that is well-defined only when the treatment effect is linear.
+        Once the effect curve bends, "the" interaction effect splits into two
+        distinct, equally legitimate questions:
+      </p>
+      <ul class="content-list">
+        <li>
+          <strong>How different are the two groups, as they actually experience the
+          treatment?</strong> Each group is evaluated at its own typical intensity —
+          this is the difference in Conditional Average Marginal Effects (dCAME).
+        </li>
+        <li>
+          <strong>How different would the two groups be if exposed to the same
+          intensity?</strong> Both groups are evaluated at a common intensity — this
+          is the Average Interactive Partial Effect (AIPE).
+        </li>
+      </ul>
+      <p>
+        A linear model collapses these into a single number. A non-linear one
+        won't — and the gap between them is often the more interesting finding.
+      </p>
+
+      <h2><span class="section-num">2.2</span>Illustrative case: policy exposure and political behavior</h2>
+      <p>
+        <em>Illustrative, not the paper's actual application — TODO replace.</em>
+        Suppose a researcher asks whether a labor-market shock shifts political
+        attitudes more for economically exposed workers than for insulated ones. If
+        exposed workers also happen to experience more <em>intense</em> shocks on
+        average, then a naive comparison mixes two things together: a genuine
+        difference in sensitivity, and a difference in how hard each group was hit.
+        dCAME answers "who reacted more, given what actually happened to them" —
+        useful for describing the political fallout of an actual event. AIPE
+        answers "who would react more to the same-sized shock" — useful for
+        predicting what happens if the shock's severity changes.
+      </p>
+
+      <h2><span class="section-num">2.3</span>Illustrative case: dosage and treatment effects</h2>
+      <p>
+        <em>Illustrative, not the paper's actual application — TODO replace.</em>
+        In program-evaluation settings where "treatment" is really a dial rather
+        than a switch (hours of exposure, dosage, funding intensity), subgroups
+        frequently receive different average doses simply because of how the
+        program is administered, not because of anything about the outcome model.
+        Reporting only a linear interaction term implicitly assumes the dial has a
+        constant effect per unit — an assumption worth checking, not asserting.
+      </p>
+
+      <h2><span class="section-num">2.4</span>Seeing both quantities at once</h2>
+      <p>
+        <a href="https://github.com/SerranoSerrat/dcameaipe">dcameaipe</a> makes the
+        comparison in <a href="index.html">the diagram above</a> concrete:
+        <code class="inline">compare = "ALL"</code> fits the flexible model once and
+        reports the linear-model estimate, dCAME, and AIPE side by side, so you can
+        see directly how much the linearity assumption was costing you.
+      </p>
+
+      <div class="code-block">
+        <pre><code>res &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data     = mydata, Y = <span class="tok-str">"y"</span>, D = <span class="tok-str">"treat"</span>, X = <span class="tok-str">"group"</span>,
+  estimand = <span class="tok-str">"AIPE"</span>,
+  compare  = <span class="tok-str">"ALL"</span>   <span class="tok-com"># linear model, D-CAME, and AIPE together</span>
+)
+
+<span class="tok-fn">summary</span>(res)   <span class="tok-com"># one row per estimand</span>
+res$plot        <span class="tok-com"># all three, plotted together</span></code></pre>
+      </div>
+
+      <p>
+        See <a href="get-started.html">Get Started</a> for the full argument list,
+        including the GAM alternative to the default basis model and the
+        bootstrap/cross-fit inference options.
+      </p>
+
+      <div class="page-nav">
+        <a href="get-started.html"><span class="dir">Previous</span>1 · Get Started</a>
+        <a class="next" href="implications.html"><span class="dir">Next</span>3 · Implications</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

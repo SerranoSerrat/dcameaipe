@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>dcameaipe — Documentation</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <!-- ============ SIDEBAR (identical on every page) ============ -->
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="applications.html">Applications</a></li>
+        <li><a href="implications.html">Implications</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <!-- ============ MAIN CONTENT ============ -->
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Documentation</p>
+      <h1>Quantities of Interest for Interactions</h1>
+      <p class="lede">
+        A short guide to the two questions researchers usually mean when they ask
+        “does the treatment effect differ across groups?” — and why picking the
+        wrong one, or letting a linear model pick it for you, can quietly
+        change your answer.
+      </p>
+
+      <div class="todo">
+        <strong>TODO —</strong> replace this paragraph with a 2–3 sentence summary
+        written for readers of your website (not the journal abstract). Say what the
+        package does, who it's for, and link to the published article.
+      </div>
+
+      <h2><span class="section-num">·</span>Two ways to ask the same question</h2>
+      <p>
+        Suppose a treatment's effect is non-linear, and two groups are exposed to it
+        at different typical intensities. You can compare the groups the way the
+        data actually finds them — each at its own typical dose — or you can hold
+        the dose fixed and compare the groups on equal footing. These are different
+        questions, and under non-linearity they give different answers.
+      </p>
+
+      <div style="margin: 2em 0;">
+        <svg viewBox="0 0 620 300" role="img" aria-labelledby="diagramTitle" style="width:100%; height:auto; max-width:620px;">
+          <title id="diagramTitle">Two comparisons of a non-linear treatment effect across two groups</title>
+
+          <!-- Panel 1: dCAME — compare at each group's own typical intensity -->
+          <text x="20" y="24" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1c1c1e">Compare at each group's own dose</text>
+          <text x="20" y="42" font-family="Inter, sans-serif" font-size="11.5" fill="#9a9a9f">— the difference in CAMEs</text>
+
+          <line x1="20" y1="230" x2="260" y2="230" stroke="#e6e6e9" stroke-width="1.5"/>
+          <line x1="20" y1="60" x2="20" y2="230" stroke="#e6e6e9" stroke-width="1.5"/>
+
+          <path d="M20,215 C90,150 170,85 260,55" fill="none" stroke="#1184fe" stroke-width="2.5"/>
+          <path d="M20,215 C90,195 170,155 260,120" fill="none" stroke="#9a9a9f" stroke-width="2.5" stroke-dasharray="5,4"/>
+
+          <line x1="85" y1="230" x2="85" y2="163" stroke="#c9c9cf" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="85" cy="163" r="4.5" fill="#1184fe"/>
+          <line x1="215" y1="230" x2="215" y2="126" stroke="#c9c9cf" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="215" cy="126" r="4.5" fill="#9a9a9f"/>
+
+          <path d="M85,120 Q150,100 215,116" fill="none" stroke="#1c1c1e" stroke-width="1.2"/>
+          <text x="150" y="98" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill="#1c1c1e">ΔCAME</text>
+
+          <text x="85" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1184fe">Group A dose</text>
+          <text x="215" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#9a9a9f">Group B dose</text>
+
+          <!-- Panel 2: AIPE — compare at a matched intensity -->
+          <text x="360" y="24" font-family="Inter, sans-serif" font-size="13" font-weight="600" fill="#1c1c1e">Compare at a matched dose</text>
+          <text x="360" y="42" font-family="Inter, sans-serif" font-size="11.5" fill="#9a9a9f">— the Average Interactive Partial Effect</text>
+
+          <line x1="360" y1="230" x2="600" y2="230" stroke="#e6e6e9" stroke-width="1.5"/>
+          <line x1="360" y1="60" x2="360" y2="230" stroke="#e6e6e9" stroke-width="1.5"/>
+
+          <path d="M360,215 C430,150 510,85 600,55" fill="none" stroke="#1184fe" stroke-width="2.5"/>
+          <path d="M360,215 C430,195 510,155 600,120" fill="none" stroke="#9a9a9f" stroke-width="2.5" stroke-dasharray="5,4"/>
+
+          <line x1="480" y1="230" x2="480" y2="60" stroke="#c9c9cf" stroke-width="1" stroke-dasharray="3,3"/>
+          <circle cx="480" cy="112" r="4.5" fill="#1184fe"/>
+          <circle cx="480" cy="163" r="4.5" fill="#9a9a9f"/>
+
+          <line x1="500" y1="112" x2="500" y2="163" stroke="#1c1c1e" stroke-width="1.2"/>
+          <text x="508" y="142" font-family="JetBrains Mono, monospace" font-size="11" fill="#1c1c1e">AIPE</text>
+
+          <text x="480" y="248" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#1c1c1e">Same dose, both groups</text>
+
+          <!-- shared legend -->
+          <line x1="20" y1="278" x2="42" y2="278" stroke="#1184fe" stroke-width="2.5"/>
+          <text x="48" y="282" font-family="Inter, sans-serif" font-size="11" fill="#5b5b60">Group A</text>
+          <line x1="130" y1="278" x2="152" y2="278" stroke="#9a9a9f" stroke-width="2.5" stroke-dasharray="5,4"/>
+          <text x="158" y="282" font-family="Inter, sans-serif" font-size="11" fill="#5b5b60">Group B</text>
+        </svg>
+      </div>
+
+      <p>
+        When the effect curve is flat, it doesn't matter which comparison you run.
+        When it isn't — and it usually isn't — the two panels above can disagree,
+        sometimes even in sign. Knowing which one your research question actually
+        calls for is the first contribution of the paper; estimating it without
+        assuming linearity is the second.
+      </p>
+
+      <h2><span class="section-num">·</span>Where to go next</h2>
+      <div class="card-grid">
+        <a class="card" href="get-started.html">
+          <span class="card-num">01</span>
+          <h3>Get Started</h3>
+          <p>Install the package and run a first model.</p>
+        </a>
+        <a class="card" href="applications.html">
+          <span class="card-num">02</span>
+          <h3>Applications</h3>
+          <p>Worked examples of dCAME vs. AIPE in practice.</p>
+        </a>
+        <a class="card" href="implications.html">
+          <span class="card-num">03</span>
+          <h3>Implications</h3>
+          <p>What this means for design, review, and policy.</p>
+        </a>
+      </div>
+
+      <div class="callout">
+        This site accompanies <em>Quantities of Interest for Interactions and the
+        Pitfalls of Assuming Linear Treatment Effects</em>, <em>Sociological Science</em>
+        13 (2026): 945–970. See <a href="references.html">References</a> for the full citation.
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>
