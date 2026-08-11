@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Theory in Short — dcameaipe</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="theory.html">Theory in Short</a></li>
+        <li><a href="application.html">An Application</a></li>
+        <li><a href="discussion.html">Further Discussion</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Chapter 2</p>
+      <h1><span class="chapter-num">2</span>Theory in Short</h1>
+      <p class="lede">
+        A summary of the argument in the paper: what the two estimands are, when they
+        come apart, and why a linear interaction model may not deliver either of them.
+        Formulas are included for completeness — the intuition survives if you skip them.
+      </p>
+
+      <h2><span class="section-num">2.1</span>One question, two answers</h2>
+      <p>
+        Start with the paper's motivating example. Extreme temperatures damage health,
+        and we want to know whether they damage the health of low-SES people more than
+        that of high-SES people. Suppose the true relationship looks like this: the
+        curve linking temperature exposure to health problems is <em>identical</em> for
+        both groups, but low-SES individuals sit further to the right of it — they are
+        simply exposed more.
+      </p>
+
+      <figure style="margin:2em 0;">
+        <img src="img/figure1.png" alt="Simulated relationship between extreme temperatures and health problems, by SES, with exposure histograms below" style="width:100%; height:auto; display:block; border:1px solid #e6e6e9; border-radius:4px;">
+        <figcaption style="margin-top:.7em; font-size:.85rem; color:#5b5b60; line-height:1.5;">
+          <strong>Figure 1.</strong> Simulated data: effect of extreme temperatures on
+          health problems by socioeconomic status. The histograms show the density of
+          exposure for each group. The two curves nearly coincide; the two groups sit
+          on different parts of them.
+        </figcaption>
+      </figure>
+
+      <p>Now ask two perfectly sensible questions about this picture:</p>
+      <ul class="content-list">
+        <li>
+          <strong>“For exposure as it actually exists, does a further increase in
+          extreme temperatures affect the two groups differently?”</strong> Yes — the
+          curve is steeper where low-SES people are concentrated, so a generalized
+          rise in temperatures hurts them more. This is the
+          <strong>difference in conditional average marginal effects (D-CAME)</strong>.
+        </li>
+        <li>
+          <strong>“At similar exposure levels, does an increase affect the two groups
+          differently?”</strong> No — the curves lie on top of each other, so two
+          people with the same exposure respond the same way regardless of SES. This is
+          the <strong>average interactive partial effect (AIPE)</strong>.
+        </li>
+      </ul>
+      <p>
+        Both answers are correct. They answer different questions. The trouble starts
+        when a paper estimates one and interprets the other — for instance, reporting a
+        significant D-CAME and explaining it with a mechanism (“high-SES individuals can
+        shelter from the heat”) that is a claim about the AIPE, which here is exactly
+        zero. That is how a well-identified estimate turns into an unfounded story.
+      </p>
+
+      <h2><span class="section-num">2.2</span>The building blocks</h2>
+      <p>
+        A theoretical estimand has two parts: a <em>unit-specific quantity</em> and a
+        <em>target population</em>. With a continuous treatment, the unit-specific
+        quantity is the slope of the potential-outcome curve, $\partial Y_i(d)/\partial d$.
+        Averaging it over the units in group $X = x$ gives the conditional average
+        marginal effect:
+      </p>
+      $$\tau^{\text{CAME}}_x \;=\; \frac{1}{N_x}\sum_{i=1}^{N_x} \frac{\partial Y_i(d)}{\partial d}$$
+      <p>
+        It is useful to slice this differently. Define the <strong>conditional average
+        partial effect</strong>, $\text{CAPE}_x(d)$ — the average slope of the curve for
+        group $x$ <em>at</em> treatment value $d$. In the temperature example,
+        $\text{CAPE}_{\text{low}}(2)$ is the marginal effect of more extreme temperatures
+        among low-SES people who have already had two days of them. The CAME is then just
+        a weighted average of CAPEs, with weights given by how common each exposure level
+        is <em>within that group</em>.
+      </p>
+      <p>
+        The corresponding contrast is the <strong>interactive partial effect</strong>,
+        the vertical distance between the two groups' slopes at a common value of $d$:
+      </p>
+      $$\text{IPE}(d) \;=\; \text{CAPE}_1(d) - \text{CAPE}_0(d)$$
+      <p>
+        In Figure 1, $\text{IPE}(d) = 0$ everywhere — that is the precise sense in which
+        “there is no interaction here.”
+      </p>
+
+      <h2><span class="section-num">2.3</span>The two estimands</h2>
+      <p>
+        <strong>D-CAME</strong> is the difference between the two groups' CAMEs. Writing
+        it in terms of CAPEs and the group-specific density of the treatment,
+        $f_{D|x}$, makes the weighting visible:
+      </p>
+      $$\tau^{\text{D-CAME}} \;=\; \tau^{\text{CAME}}_1 - \tau^{\text{CAME}}_0 \;=\; \int_d \text{CAPE}_1(d)\, f_{D|1}(d)\,\mathrm{d}d \;-\; \int_d \text{CAPE}_0(d)\, f_{D|0}(d)\,\mathrm{d}d$$
+      <p>
+        Each group is evaluated <em>where it actually is</em>. That is a feature, not a
+        bug: it is the right quantity if you want to know how a generalized increase in
+        the treatment would play out across groups given the exposure they already have.
+        But it means D-CAME mixes two things — a difference in slopes and a difference in
+        intensity.
+      </p>
+      <p>
+        <strong>AIPE</strong> averages the IPE over a <em>common</em> distribution of the
+        treatment, so both groups are weighted the same way:
+      </p>
+      $$\tau^{\text{AIPE}} \;=\; \int_d \big[\underbrace{\text{CAPE}_1(d) - \text{CAPE}_0(d)}_{\text{IPE}(d)}\big]\, f(d)\,\mathrm{d}d$$
+      <p>
+        This is the quantity you want when the claim is about a mechanism: “this group
+        responds differently to the same dose.”
+      </p>
+      <p style="font-size:.92rem; color:#5b5b60;">
+        Neither estimand is directly estimable as written, since both involve
+        counterfactual outcomes at treatment values we do not observe. The paper's
+        online supplement A.3 states the identification assumptions connecting these
+        theoretical estimands to their empirical counterparts.
+      </p>
+
+      <h2><span class="section-num">2.4</span>When do they coincide?</h2>
+      <p>
+        Write each group's density as the overall density plus a group-specific
+        deviation, $f_{D|x}(d) = f(d) + \big[f_{D|x}(d) - f(d)\big]$, substitute into the
+        D-CAME expression, and the two estimands separate cleanly:
+      </p>
+      $$\tau^{\text{D-CAME}} \;=\; \underbrace{\int \big[\text{CAPE}_1(d) - \text{CAPE}_0(d)\big] f(d)\,\mathrm{d}d}_{\tau^{\text{AIPE}}} \;+\; \underbrace{\Delta}_{\substack{\text{distributional}\\ \text{discrepancy}}}$$
+      $$\Delta \;=\; \int \text{CAPE}_1(d)\big[f_{D|1}(d) - f(d)\big]\mathrm{d}d \;-\; \int \text{CAPE}_0(d)\big[f_{D|0}(d) - f(d)\big]\mathrm{d}d$$
+      <p>
+        So the two estimands agree exactly when $\Delta = 0$, and there are two ways for
+        that to happen:
+      </p>
+      <ul class="content-list">
+        <li>
+          <strong>The groups have the same treatment distribution</strong>
+          ($f_{D|1} = f_{D|0} = f$). Then each bracket is zero. Intuitively, if exposure
+          is independent of the moderator, there is no intensity difference to confound
+          the slope difference.
+        </li>
+        <li>
+          <strong>Treatment effects are linear</strong> ($\text{CAPE}_x(d) = \beta_x$).
+          Then each term becomes $\beta_x \int [f_{D|x}(d) - f(d)]\,\mathrm{d}d = 0$,
+          because both are densities and integrate to one. If the slope is the same
+          everywhere, it cannot matter where you evaluate it.
+        </li>
+      </ul>
+
+      <table style="width:100%; border-collapse:collapse; margin:1.6em 0; font-size:.92rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;"></th>
+            <th colspan="2" style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;">$D$ and $X$</th>
+          </tr>
+          <tr>
+            <th style="text-align:left; padding:.5em .8em; border-bottom:1px solid #e6e6e9;">Treatment effects</th>
+            <th style="text-align:center; padding:.5em .8em; border-bottom:1px solid #e6e6e9; font-weight:500;">Independent</th>
+            <th style="text-align:center; padding:.5em .8em; border-bottom:1px solid #e6e6e9; font-weight:500;">Non-independent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">Linear</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">D-CAME = AIPE</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">D-CAME = AIPE</td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .8em;">Non-linear</td>
+            <td style="padding:.55em .8em; text-align:center;">D-CAME = AIPE</td>
+            <td style="padding:.55em .8em; text-align:center;"><strong>D-CAME ≠ AIPE</strong></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Only one cell is dangerous — but it is the cell most observational social science
+        lives in. Treatments are rarely distributed identically across groups (that is
+        often <em>why</em> the groups are interesting), and effects are rarely linear over
+        the whole range of a dose.
+      </p>
+
+      <h2><span class="section-num">2.5</span>Why the linear model doesn't settle it</h2>
+      <p>The workhorse specification is</p>
+      $$Y_i = \gamma + \alpha D_i + \eta X_i + \beta^{L}(D_i \times X_i) + \delta' Z_i + e_i$$
+      <p>
+        and $\beta^{L}$ is read as “the interactive effect.” The usual defence of this
+        practice runs: the quantity of interest is the D-CAME, and the linear model
+        estimates it. Both halves of that are contestable. Section 2.3 gives one reason
+        the first half may fail — D-CAME may simply not be the question being asked. The
+        second half fails on its own terms.
+      </p>
+      <p>
+        When treatment effects really are linear for both groups, $\beta^{L}$ is an
+        unbiased estimate of the D-CAME — and hence of the AIPE, since the two coincide.
+        When they are not, Yitzhaki (1996) tells us what OLS actually returns: a weighted
+        sum of the slopes of the $D$–$Y$ relationship, with each observation weighted by
+        the distance of $D_i$ from the median of $D$ and by the local variance of $D$.
+        Those weights come from the geometry of the regression, not from any theory. The
+        result has the right unit-specific quantity attached to the wrong population — so
+        it does not correspond to <em>either</em> estimand.
+      </p>
+      <p>
+        The paper makes this concrete with a deliberately unforgiving simulation. Group 1
+        has a piecewise linear relationship — slope $-1$ up to the 75th percentile of $D$,
+        slope $+1$ above it — while for group 0, $Y$ is independent of $D$. $D$ is
+        log-normal and independent of the moderator, so by the table above D-CAME and AIPE
+        are equal, both $-0.5$. There is a single true answer and the linear model has no
+        excuse.
+      </p>
+
+      <figure style="margin:2em 0;">
+        <img src="img/figure2.png" alt="Kernel density of linear interaction coefficients across 1,000 Monte Carlo simulations, centred near zero while the true value is minus 0.5" style="width:100%; height:auto; display:block; border:1px solid #e6e6e9; border-radius:4px;">
+        <figcaption style="margin-top:.7em; font-size:.85rem; color:#5b5b60; line-height:1.5;">
+          <strong>Figure 2.</strong> Distribution of the linear interaction coefficient
+          across 1,000 Monte Carlo replications ($n = 2{,}000$). The true D-CAME and AIPE
+          are both $-0.5$ (dashed red line).
+        </figcaption>
+      </figure>
+
+      <p>
+        The estimates are not merely noisy around $-0.5$; they are centred on the
+        <em>opposite sign</em>. A researcher running this regression would conclude with
+        confidence that the interaction points the other way. The lesson is not that
+        linear models are always wrong — it is that assuming linear treatment effects is
+        an empirical assumption doing real work, and it deserves the same scrutiny as any
+        other identifying assumption.
+      </p>
+
+      <h2><span class="section-num">2.6</span>What to estimate instead</h2>
+      <p>The alternative is to let each group have its own function of the treatment:</p>
+      $$Y_i = \mu + \alpha X_i + g_0(D_i) + g_1(D_i) + \delta' \mathbf{Z}_i + e_i$$
+      <p>
+        with $g_x(\cdot)$ continuously differentiable. Everything then reduces to
+        estimating $g_x$. Adding a quadratic or cubic term is the common fix, but it
+        imposes a shape rather than discovering one. The package offers two more flexible
+        routes:
+      </p>
+      <ul class="content-list">
+        <li>
+          <strong>Basis regression with cross-validation.</strong> Search over a set of
+          candidate functions — polynomials up to degree 5, cubic splines with up to 6
+          knots at empirical quintiles — and pick the one minimizing 10-fold
+          cross-validated MSE. It stays linear in parameters, so it is estimated by OLS
+          and plugs straight into instrumental variables, multilevel models, multiple
+          imputation, and lasso-based covariate selection.
+        </li>
+        <li>
+          <strong>GAM.</strong> Impose no global parametric form; represent $g_x$ as a
+          penalized regression spline with the penalty chosen by REML (or GCV in large
+          samples). More flexible, and it extends naturally to a continuous moderator by
+          fitting a bivariate smooth $g(D, X)$ rather than discretizing.
+        </li>
+      </ul>
+      <p>
+        In simulation both track an oracle that knows the true functional form. When the
+        truth is a polynomial the basis approach is nearly indistinguishable from the
+        oracle; when the truth has a kink — a case neither method is built for — both stay
+        approximately unbiased for both estimands, with wider sampling distributions.
+      </p>
+      <p>
+        <strong>Inference needs care.</strong> Choosing the functional form and testing it
+        on the same data is pretexting, and naive standard errors ignore that first step.
+        Two fixes: <em>cross-fitting</em>, which selects the form on one split and
+        estimates on the other (then reverses the roles to recover efficiency), and the
+        <em>bootstrap</em>, which re-runs selection inside every resample. For GAMs the
+        bootstrap is close to mandatory, since the usual intervals treat the smoothing
+        parameter as known and come out too narrow. With clustered data, use a block
+        cluster bootstrap.
+      </p>
+      <p>
+        <strong>Continuous moderators.</strong> For the basis approach, interacting the
+        moderator linearly with $g(D)$ is not enough; the paper follows Hainmueller,
+        Mummolo and Xu (2019) in binning:
+      </p>
+      $$Y_i = \sum_{j=1}^{3}\big\{\mu_j + g_j(D_i) + \alpha_j X_i\big\} G_j + \delta' Z_i + u_i$$
+      <p>
+        where $G_j$ marks the $j$th tercile of $X$, and the headline results contrast the
+        bottom and top terciles. For GAMs the bivariate smooth handles this directly, but
+        slopes still have to be aggregated over meaningfully defined subgroups — the paper
+        recommends evaluating at the median of $X$ within the bottom and top terciles.
+      </p>
+
+      <h2><span class="section-num">2.7</span>What to report</h2>
+      <p>
+        With a non-linear specification there is no single informative coefficient, so the
+        paper recommends reporting three complementary pieces, each covering the others'
+        blind spots:
+      </p>
+
+      <table style="width:100%; border-collapse:collapse; margin:1.6em 0; font-size:.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e; width:26%;">Quantity</th>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Tells you</th>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Doesn't tell you</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2; vertical-align:top;"><strong>Predicted values</strong></td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2; vertical-align:top;">The shape of the treatment–outcome relationship at different moderator levels.</td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2; vertical-align:top;">Whether the differences in slope are statistically significant.</td>
+          </tr>
+          <tr>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2; vertical-align:top;"><strong>IPEs</strong></td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2; vertical-align:top;">Which treatment values drive the interactive effect, and whether it is present across the range.</td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2; vertical-align:top;">Whether there is an interactive effect on average.</td>
+          </tr>
+          <tr>
+            <td style="padding:.6em .8em; vertical-align:top;"><strong>AIPE</strong></td>
+            <td style="padding:.6em .8em; vertical-align:top;">An overall summary of whether effects differ at comparable treatment levels.</td>
+            <td style="padding:.6em .8em; vertical-align:top;">The pattern beneath it — very different IPE curves can average to the same AIPE.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Add the predicted-values panel a rug or histogram of $D$ for each group, so
+        readers can see where the data actually are. For between-group comparisons of
+        predicted values, 84 percent intervals are more informative than 95 percent ones —
+        though if the group difference is the object of interest, test it directly rather
+        than eyeballing overlap.
+      </p>
+
+      <div class="callout">
+        <strong>Three guidelines, in one line each.</strong> Decide whether your question
+        is about groups as they are (D-CAME) or groups on equal footing (AIPE), and say so.
+        Take non-linear treatment effects seriously even if D-CAME is your target — the
+        linear model may not recover it. And report predicted values, IPEs and the summary
+        estimand together, because no one of them is sufficient.
+      </div>
+
+      <div class="page-nav">
+        <a href="get-started.html"><span class="dir">Previous</span>1 · Get Started</a>
+        <a class="next" href="application.html"><span class="dir">Next</span>3 · An Application</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

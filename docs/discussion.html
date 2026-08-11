@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Further Discussion — dcameaipe</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="theory.html">Theory in Short</a></li>
+        <li><a href="application.html">An Application</a></li>
+        <li><a href="discussion.html">Further Discussion</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Chapter 4</p>
+      <h1><span class="chapter-num">4</span>Further Discussion</h1>
+      <p class="lede">
+        Open threads: what happens when the non-linearity sits somewhere else, what
+        controls do to the quantity of interest, and how the framework changes when the
+        treatment takes a handful of discrete values.
+      </p>
+
+      <h2><span class="section-num">4.1</span>Three places non-linearity can hide</h2>
+      <p>
+        “Non-linear interaction model” is used loosely for at least three distinct
+        situations, and they call for different fixes. It is worth separating them before
+        going further.
+      </p>
+      <ul class="content-list">
+        <li>
+          <strong>Non-linear treatment effects.</strong> $E[Y \mid D, X]$ bends in $D$:
+          the effect of one more unit of treatment depends on how much treatment you have
+          already had. This is what the paper is about, and it is what drives a wedge
+          between D-CAME and AIPE.
+        </li>
+        <li>
+          <strong>Non-linear moderation.</strong> The conditional marginal effect bends
+          in $X$: the standard product term $\beta^{L}(D \times X)$ forces the effect of
+          $D$ to move linearly across levels of the moderator. This is the problem
+          Hainmueller, Mummolo and Xu (2019, HMX) set out to solve with binning and kernel
+          estimators. §4.2 takes it up.
+        </li>
+        <li>
+          <strong>Non-linear link functions.</strong> Logit, probit, Poisson and the rest
+          impose non-linearity in the treatment by construction, through compression —
+          marginal effects vary with $D$ and with every covariate even when no product
+          term appears in the index. The estimand logic carries over, but the covariate
+          bookkeeping does not, and it deserves its own treatment. <em>Left for a future
+          iteration of this document.</em>
+        </li>
+      </ul>
+      <p>
+        These are independent. A model can be linear in the treatment and non-linear in
+        the moderator, or the reverse — and the standard interaction specification assumes
+        away both at once.
+      </p>
+
+      <h2><span class="section-num">4.2</span>Non-linear moderators</h2>
+
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">The estimand exists, but the summary is missing</h3>
+      <p>
+        HMX and the subsequent literature deliver the conditional marginal effect as a
+        <em>function</em>: $\theta(x) = E[\partial Y_i(d)/\partial d \mid X_i = x]$, plotted
+        across the support of the moderator with pointwise and uniform confidence bands.
+        In the vocabulary of <a href="theory.html">Chapter 2</a>, that curve is the CAME
+        evaluated at each moderator value.
+      </p>
+      <p>
+        What that literature does not supply is a summary of the interactive effect
+        itself. A plotted curve tells you the effect is larger at high $X$ than at low $X$;
+        it does not give you a number for “how much larger, on average” with an interval
+        attached, and readers end up eyeballing whether two bands overlap. The natural
+        summaries are already available in this framework: the D-CAME as a contrast between
+        representative moderator values, and — where the question is about mechanisms — the
+        AIPE. Reporting whether, on average, treatment effects are more positive or more
+        negative at higher moderator values is a small addition to current practice with a
+        real payoff in interpretability.
+      </p>
+
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">Discrete treatment, continuous moderator: the mirror image</h3>
+      <p>
+        Take the other canonical setup — $D$ binary, $X$ continuous. Here D-CAME is the
+        only quantity in play, since comparing “at similar treatment intensities” is
+        vacuous when there are only two intensities. But the argument of the paper runs
+        again with the roles of $D$ and $X$ exchanged.
+      </p>
+      <p>
+        The product-term model assumes $\theta(x)$ is linear in $x$. If it is not, OLS does
+        not return an average of $\theta(x)$ over any theoretically motivated population.
+        It returns a Yitzhaki-weighted average, with weights set by the distance of $X_i$
+        from the median of $X$ and the local variance of $X$ — and when $D$ and $X$ are
+        correlated, those weights are not innocuous. Same logic, same failure mode, same
+        conclusion: the specification is doing work that has to be defended rather than
+        assumed. This is exactly HMX's point, and their binning and kernel estimators are
+        the right response to it.
+      </p>
+
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">What the kernel estimator relies on</h3>
+      <p>
+        Hainmueller, Liu, Liu, Mummolo and Xu (2025) respond to Simonsohn's critique by
+        showing that, once the estimand is properly defined as the CME, their kernel
+        estimator recovers it — even when $Y$ depends on $D$ quadratically and $D$ and $X$
+        are correlated. Their Figure 2 makes the case with the DGP
+      </p>
+      $$Y = D^2 - 0.5D + \varepsilon, \qquad (D, X) \sim N\!\left(0, \begin{bmatrix}1 & 0.5\\ 0.5 & 1\end{bmatrix}\right)$$
+      <p>
+        for which the true CME is $\theta(x) = x - 0.5$, and the kernel estimate tracks it
+        closely. The demonstration is correct. But it is worth being explicit about what
+        makes it work, because the answer is a scope condition rather than a general
+        guarantee.
+      </p>
+      <p>
+        The kernel estimator relaxes linearity <em>in the moderator</em>. Inside each
+        neighbourhood of $X = x_0$ it still runs a linear regression of $Y$ on $D$, so it
+        localizes in $X$ but never in $D$. What it returns in the limit is a linear
+        projection coefficient:
+      </p>
+      $$\hat\theta(x) \;\xrightarrow{p}\; \frac{\operatorname{Cov}(D, Y \mid X = x)}{\operatorname{Var}(D \mid X = x)}$$
+      <p>
+        whereas the estimand is an average derivative,
+        $\theta(x) = E[\,\partial Y/\partial D \mid X = x\,]$. Those two objects are the
+        same thing only under a condition on the conditional distribution of the treatment.
+        Stein's identity gives it exactly: if $D \mid X = x$ is <strong>normal</strong>,
+        then $\operatorname{Cov}(D, g(D)) = \sigma^2 E[g'(D)]$ for any differentiable $g$,
+        and the projection coefficient <em>is</em> the average derivative. Bivariate
+        normality is not a convenience of the example; it is the assumption doing the work.
+      </p>
+      <p>
+        For this specific quadratic outcome the requirement is a little weaker. Using
+        $E[D^3 \mid X] = \mu^3 + 3\mu\sigma^2 + \gamma_1\sigma^3$, where $\gamma_1(x)$ is
+        the skewness of $D \mid X = x$,
+      </p>
+      $$\frac{\operatorname{Cov}(D, Y \mid X=x)}{\operatorname{Var}(D \mid X=x)} \;=\; \underbrace{2\mu(x) - 0.5}_{\theta(x)} \;+\; \underbrace{\gamma_1(x)\,\sigma(x)}_{\text{bias}}$$
+      <p>
+        So the bias is the conditional skewness times the conditional standard deviation.
+        It vanishes whenever $D \mid X$ is conditionally <em>symmetric</em> — under
+        normality, but also under plenty of non-normal distributions. That is why simply
+        making the treatment non-normal does not reveal the problem: you have to make it
+        conditionally skewed.
+      </p>
+
+      <div class="callout">
+        <strong>The Yitzhaki problem, one level down.</strong> The bias term is the same
+        object the paper identifies in the linear interaction model — a linear projection
+        standing in for an average derivative, with weights that come from the geometry of
+        the regression rather than from a theoretical population. The kernel estimator
+        removes it along the moderator dimension and leaves it along the treatment
+        dimension.
+      </div>
+
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">A design that separates the two</h3>
+      <p>
+        The <a href="code/kernel-conditional-skewness.R">accompanying script</a> keeps the
+        outcome equation, the correlation, and the first two moments of $D$ fixed, and
+        varies only the shape of $D \mid X$ across three designs:
+      </p>
+      <ul class="content-list">
+        <li><strong>(a) Normal.</strong> $D \sim N(0,1)$ — the HMX benchmark.</li>
+        <li>
+          <strong>(b) Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$ where $W$ is
+          the standard normal correlated with $X$. Marginally $D \sim U(-\sqrt3, \sqrt3)$,
+          so $E[D] = 0$, $\operatorname{Var}(D) = 1$ and the unconditional skewness is
+          zero — identical to (a) on every summary a reader would check. But conditionally,
+          $D \mid X$ is squeezed against whichever boundary $X$ pushes it toward:
+          right-skewed at low $x$, left-skewed at high $x$, symmetric only at $x = 0$.
+        </li>
+        <li>
+          <strong>(c) Symmetric uniform.</strong> $D = \rho X + U$ with $U$ uniform. Not
+          normal, but conditionally symmetric. The placebo.
+        </li>
+      </ul>
+
+      <div class="code-block">
+        <pre><code><span class="tok-com"># (b): marginally uniform, conditionally skewed</span>
+S  &lt;- <span class="tok-fn">matrix</span>(<span class="tok-fn">c</span>(1, rho, rho, 1), 2, 2)
+WX &lt;- MASS::<span class="tok-fn">mvrnorm</span>(n, mu = <span class="tok-fn">c</span>(0, 0), Sigma = S)
+W  &lt;- WX[, 1]; X &lt;- WX[, 2]
+
+D &lt;- <span class="tok-fn">sqrt</span>(3) * (2 * <span class="tok-fn">pnorm</span>(W) - 1)          <span class="tok-com"># D ~ U(-sqrt3, sqrt3)</span>
+Y &lt;- D^2 - 0.5 * D + <span class="tok-fn">rnorm</span>(n)
+
+<span class="tok-com"># true CAME: W|X=x ~ N(rho x, 1-rho^2) and E[Phi(W)] = Phi(mu / sqrt(1+s2))</span>
+came_true &lt;- <span class="tok-fn">function</span>(x, rho = 0.5)
+  2 * <span class="tok-fn">sqrt</span>(3) * (2 * <span class="tok-fn">pnorm</span>(rho * x / <span class="tok-fn">sqrt</span>(2 - rho^2)) - 1) - 0.5
+
+d &lt;- <span class="tok-fn">data.frame</span>(Y = Y, D = D, X = X)
+
+out &lt;- <span class="tok-fn">interflex</span>(estimator = <span class="tok-str">"kernel"</span>,
+                 data = d, Y = <span class="tok-str">"Y"</span>, D = <span class="tok-str">"D"</span>, X = <span class="tok-str">"X"</span>,
+                 Ylabel = <span class="tok-str">"Y"</span>, Dlabel = <span class="tok-str">"D"</span>, Xlabel = <span class="tok-str">"X"</span>,
+                 vartype = <span class="tok-str">"bootstrap"</span>,
+                 main = <span class="tok-str">"Kernel model"</span>)</code></pre>
+      </div>
+
+      <p>
+        Unlike the normal case, the true CAME here is not a straight line: it is S-shaped
+        and saturating, $\theta(x) = 2\sqrt{3}\,\big(2\Phi(\rho x/\sqrt{2-\rho^2}) - 1\big) - 0.5$.
+        Evaluating at the median of the bottom and top terciles of $X$ ($x = \mp 0.967$)
+        and taking the difference gives the D-CAME implied by the design:
+      </p>
+
+      <table style="width:100%; border-collapse:collapse; margin:1.5em 0; font-size:.9rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">Design</th>
+            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">$\gamma_1(x)$ at $x=0.967$</th>
+            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">True D-CAME</th>
+            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">Kernel limit</th>
+            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">Recovered</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2;">(a) Normal</td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">0.00</td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">1.935</td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">1.935</td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">100%</td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2;"><strong>(b) Copula</strong></td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>−0.52</strong></td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>1.977</strong></td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>1.067</strong></td>
+            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>54%</strong></td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .7em;">(c) Symmetric uniform</td>
+            <td style="padding:.55em .7em; text-align:right;">0.00</td>
+            <td style="padding:.55em .7em; text-align:right;">1.935</td>
+            <td style="padding:.55em .7em; text-align:right;">1.935</td>
+            <td style="padding:.55em .7em; text-align:right;">100%</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The pattern in design (b) is a compression toward the middle. Because
+        $\gamma_1(x)$ has the opposite sign to $x$, the estimated CAME is pulled up where
+        the truth is low and pulled down where the truth is high. At the top tercile the
+        true CAME is 0.489 and the kernel limit is 0.034 — a genuine effect that would be
+        reported as indistinguishable from zero. The estimated interaction is not
+        spurious, but it is roughly half the size it should be.
+      </p>
+      <p>
+        Two features of this are worth noting. First, the bias does not shrink with the
+        bandwidth: it is present in the $h \to 0$ limit and shows up at essentially the same
+        magnitude at $h = 0.5$, $0.3$ and $0.15$. It is an asymptotic bias, not a smoothing
+        artefact, so more data will not help. Second, design (c) recovers the truth exactly
+        — which is the point of including it. The relevant condition is conditional
+        symmetry (here) or conditional normality (in general), not non-normality per se.
+      </p>
+
+      <div class="callout">
+        <strong>Read this as a scope condition, not a refutation.</strong> HMX are right
+        that the CME is a well-defined estimand and that the critiques aimed at their
+        estimators had not specified one. The kernel estimator does target the CME, and
+        under conditional normality it recovers it. What the amendment adds is when to
+        worry: skewed treatments (income, wealth, exposure measures, counts, anything
+        bounded at zero), or bounded treatments where the moderator pushes some groups
+        against a floor or ceiling. Those are common. A useful habit is to plot $D$ within
+        moderator bins and look at the shape, not just the mean.
+      </div>
+
+      <h2><span class="section-num">4.3</span>Controls, and what they do to the estimand</h2>
+      <p>
+        The framework so far treats controls as bookkeeping: they enter additively, and the
+        estimands are defined over the raw distribution of the treatment. Both parts of that
+        deserve more than they currently get, and a future iteration will take them up
+        properly. Two threads.
+      </p>
+      <p>
+        <strong>Controls change the population, not just the precision.</strong> Once
+        covariates and fixed effects are partialled out, the comparison being made is no
+        longer “group 1 versus group 0” but “group 1 versus group 0 <em>within</em> the same
+        country-year, the same region, the same covariate cell.” That is usually the right
+        comparison. But it means the distributional discrepancy $\Delta$ from
+        <a href="theory.html">§2.4</a> should be evaluated within that broader group as well:
+        the difference in treatment intensity that matters is the within-cell difference,
+        not the raw one. Two groups can look very differently exposed overall and nearly
+        identically exposed within country-year — in which case D-CAME and AIPE converge and
+        the whole distinction becomes moot. The reverse can also happen. Whether the
+        distinction bites is therefore a property of the specification, not only of the data.
+      </p>
+      <p>
+        <strong>Additive controls are an assumption.</strong> The models here assume $Z$ is
+        additively separable from $D$. When $D$ and $Z$ interact in the true DGP, the model
+        is misspecified and the OLS estimate of the $D$ slope becomes a variance-weighted
+        average of covariate-specific slopes, with weights proportional to the variance of
+        $D$ at each value of $Z$ — the Yitzhaki problem again, now in the covariates. This
+        matters most when the variance of $D$ differs sharply across covariate values. The
+        natural fix is to include $D \times Z$ and average predictions over the empirical
+        distribution of $Z$, marginalizing rather than conditioning. One caution: if
+        $D \times Z$ is included, $Z$ should not then be held fixed. Fixing it moves the
+        target toward a causal-interaction quantity — how treatment effects change under an
+        exogenous manipulation of $Z$ — which is a different estimand from the effect
+        heterogeneity considered here, and one requiring much stronger assumptions.
+      </p>
+
+      <h2><span class="section-num">4.4</span>Discrete multi-valued treatments</h2>
+      <p>
+        The framework assumes $D$ is continuous. Much applied work uses a treatment measured
+        on a ratio scale that takes only a handful of values — days of extreme temperature
+        last week, number of children, years of schooling. Differences between values are
+        substantively meaningful and comparable, so the logic should carry over. It mostly
+        does, but the weights become genuinely awkward.
+      </p>
+
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">From derivatives to first differences</h3>
+      <p>
+        When $D$ takes values in $\{d_0, d_1, \ldots, d_K\}$, derivatives are not defined and
+        the natural unit-specific quantities are first differences. The conditional average
+        partial effect of moving from $d_k$ to $d_{k+1}$ for group $x$ is
+      </p>
+      $$\text{CAPE}_x(d) = E[Y \mid D = d_{k+1}, X = x] - E[Y \mid D = d_k, X = x]$$
+      <p>
+        and the interactive partial effect is the differential impact of that same move for
+        group 1 relative to group 0:
+      </p>
+      $$\text{IPE}(d, 1, 0) = \Big\{E[Y \mid D = d_{k+1}, X = 1] - E[Y \mid D = d_k, X = 1]\Big\} - \Big\{E[Y \mid D = d_{k+1}, X = 0] - E[Y \mid D = d_k, X = 0]\Big\}$$
+      <p>
+        Nothing has gone wrong yet. The unit-specific quantities follow directly from the
+        continuous case.
+      </p>
+
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">The weighting problem</h3>
+      <p>
+        The difficulty is in choosing the population — that is, in setting the weights. The
+        standard approach weights each transition from $d_k$ to $d_{k+1}$ by the probability
+        of sitting at the <em>starting</em> level. For a one-unit increase:
+      </p>
+      $$\tau^{\text{CAME, inc.}}_x = \sum_{k=0}^{K-1} \text{CAPE}_x(d_k)\, p_x(d_k)$$
+      <p>
+        where $p_x(d_k)$ is the sample share of group $X = x$ with $D = d_k$. This answers a
+        clear question: pick someone at random from group $x$, increase their $D$ by one
+        unit — what is the expected effect?
+      </p>
+      <p>
+        Note what it does to the observations at the highest observed value. They never
+        appear, because there is no $d_{K+1}$ to move to. So the weights do not sum to one:
+        $\sum_{k=0}^{K-1} p_{D|x}(d_k) < 1$.
+      </p>
+      <p>
+        Now ask the same question as a one-unit <em>decrease</em>. The effect of moving from
+        $d_{k+1}$ down to $d_k$ is $-\text{CAPE}_x(d_k)$, and the natural weight is now
+        $p_{D|x}(d_{k+1})$ — the share sitting at the starting level of the decrease. Taking
+        the negative to express it as the effect of an increase:
+      </p>
+      $$\tau^{\text{CAME, dec.}}_x = \sum_{k=0}^{K-1} \text{CAPE}_x(d_k)\, p_{D|x}(d_{k+1})$$
+      <p>
+        In general $\tau^{\text{CAME, inc.}}_x \neq \tau^{\text{CAME, dec.}}_x$. The
+        underlying unit-specific quantity — the effect of the transition between $d_k$ and
+        $d_{k+1}$ — is identical in both directions. Only the weights change, because the
+        two framings put different people at the starting line.
+      </p>
+      <p>
+        The consequence is uncomfortable: the CAME, and therefore the D-CAME and the AIPE,
+        depend on an arbitrary framing choice with no theoretical justification behind it.
+        Suppose $D \in \{1, 2, 3\}$ days of extreme temperature. A researcher asking about a
+        one-unit increase has two transitions available, 1→2 and 2→3; because 3→4 is never
+        observed, everyone at $D = 3$ receives zero weight. Ask instead about a one-unit
+        decrease and it is the people at $D = 1$ who drop out.
+      </p>
+      <p>
+        How to resolve this is beyond the scope of the paper. Averaging the increase and the
+        decrease is one option, though the weights still do not sum to one. The practical
+        recommendation for now is narrower: when the treatment is discrete, state which
+        direction the reported quantity refers to, and check whether the conclusion survives
+        the other framing.
+      </p>
+
+      <div class="page-nav">
+        <a href="application.html"><span class="dir">Previous</span>3 · An Application</a>
+        <span></span>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

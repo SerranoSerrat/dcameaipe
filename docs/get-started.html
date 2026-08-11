@@ -33,8 +33,9 @@
     <div class="nav-group">
       <ol class="nav-numbered">
         <li><a href="get-started.html">Get Started</a></li>
-        <li><a href="applications.html">Applications</a></li>
-        <li><a href="implications.html">Implications</a></li>
+        <li><a href="theory.html">Theory in Short</a></li>
+        <li><a href="application.html">An Application</a></li>
+        <li><a href="discussion.html">Further Discussion</a></li>
       </ol>
     </div>
 
@@ -55,7 +56,7 @@
 
       <p class="eyebrow">Chapter 1</p>
       <h1><span class="chapter-num">1</span>Get Started</h1>
-      <p class="lede">Installation and a first model, end to end.</p>
+      <p class="lede">Installation, and a first model end to end.</p>
 
       <h2><span class="section-num">1.1</span>Installation</h2>
       <p><strong>dcameaipe</strong> isn't on CRAN yet — install the development version from GitHub:</p>
@@ -65,7 +66,10 @@
 remotes::<span class="tok-fn">install_github</span>(<span class="tok-str">"SerranoSerrat/dcameaipe"</span>)</code></pre>
       </div>
 
-      <p>One dependency is optional and only needed if you plan to absorb high-cardinality fixed effects:</p>
+      <p>
+        One dependency is optional and only needed if you plan to absorb
+        high-cardinality fixed effects:
+      </p>
 
       <div class="code-block">
         <pre><code><span class="tok-com"># only needed for Z_FE_absorb = TRUE</span>
@@ -74,67 +78,105 @@ remotes::<span class="tok-fn">install_github</span>(<span class="tok-str">"Serra
 
       <h2><span class="section-num">1.2</span>What the function fits</h2>
       <p>
-        <code class="inline">dcame_aipe()</code> fits a K-group joint model where each
+        <code class="inline">dcame_aipe()</code> fits a joint model in which each
         group gets its own flexible function of the treatment,
-        <code class="inline">f_k(D)</code> — either a polynomial / B-spline basis
-        (<code class="inline">model = "basis"</code>, the default) or a penalized GAM
-        smooth (<code class="inline">model = "GAM"</code>). For a continuous
-        moderator <code class="inline">X</code>, groups are formed by quantile bins
-        (<code class="inline">n_parts</code>, default 3); the headline dCAME and AIPE
-        contrast the first and last group.
+        <code class="inline">g_k(D)</code> — either a polynomial / B-spline basis
+        selected by cross-validation (<code class="inline">model = "basis"</code>,
+        the default) or a penalized GAM smooth
+        (<code class="inline">model = "GAM"</code>). Controls enter additively. For a
+        continuous moderator, groups are formed by quantile bins (terciles by
+        default) and the headline D-CAME and AIPE contrast the bottom and top bin.
+      </p>
+      <p>
+        Because no single coefficient summarizes a non-linear interaction, the
+        function returns the estimands rather than a coefficient table:
+        <code class="inline">summary(res)</code> gives one row per estimand and
+        <code class="inline">res$plot</code> assembles the predicted values, the
+        interactive partial effects, and the estimand comparison into a single
+        figure. See <a href="theory.html">Theory in Short</a> for what those
+        quantities mean.
       </p>
 
       <h2><span class="section-num">1.3</span>A first example</h2>
-      <p>Binary moderator, default settings:</p>
+      <p>Binary moderator, known functional form, robust standard errors:</p>
 
       <div class="code-block">
         <pre><code><span class="tok-fn">library</span>(dcameaipe)
 
 res &lt;- <span class="tok-fn">dcame_aipe</span>(
-  data     = mydata,
-  Y        = <span class="tok-str">"wage"</span>,
-  D        = <span class="tok-str">"training_hours"</span>,   <span class="tok-com"># continuous treatment</span>
-  X        = <span class="tok-str">"union"</span>,            <span class="tok-com"># binary moderator (0/1)</span>
-  Z        = c(<span class="tok-str">"age"</span>, <span class="tok-str">"female"</span>), <span class="tok-com"># controls</span>
-  estimand = <span class="tok-str">"AIPE"</span>,
-  compare  = <span class="tok-str">"ALL"</span>               <span class="tok-com"># also show D-CAME and the linear-model comparison</span>
+  data        = DGP2,
+  Y           = <span class="tok-str">"Y"</span>, D = <span class="tok-str">"D"</span>, X = <span class="tok-str">"X"</span>,
+  estimand    = <span class="tok-str">"AIPE"</span>,
+  user_spec_0 = 2,               <span class="tok-com"># quadratic for X = 0</span>
+  user_spec_1 = 3,               <span class="tok-com"># cubic for X = 1</span>
+  inference   = <span class="tok-str">"regular"</span>,
+  vce         = <span class="tok-str">"robust"</span>,
+  compare     = <span class="tok-str">"ALL"</span>          <span class="tok-com"># linear model, D-CAME and AIPE together</span>
 )
 
 <span class="tok-fn">summary</span>(res)   <span class="tok-com"># data.frame of all estimands</span>
-res$plot        <span class="tok-com"># combined PV / IPE / coefficient plot</span></code></pre>
+res$plot        <span class="tok-com"># combined PV / IPE / estimand plot</span></code></pre>
       </div>
 
-      <p>Continuous moderator, fixed effects absorbed via <code class="inline">fixest</code>, cluster bootstrap:</p>
+      <p>
+        Continuous moderator, fixed effects, survey weights and a cluster bootstrap —
+        the specification used in the paper's application:
+      </p>
 
       <div class="code-block">
         <pre><code>res2 &lt;- <span class="tok-fn">dcame_aipe</span>(
-  data         = mydata,
-  Y            = <span class="tok-str">"y"</span>,
-  D            = <span class="tok-str">"treatment"</span>,
-  X            = <span class="tok-str">"education"</span>,        <span class="tok-com"># continuous; binned into terciles</span>
-  Z            = c(<span class="tok-str">"age"</span>, <span class="tok-str">"female"</span>),
-  Z_FE         = c(<span class="tok-str">"country"</span>, <span class="tok-str">"year"</span>),
-  Z_FE_absorb  = TRUE,               <span class="tok-com"># high-cardinality FE -&gt; feols</span>
-  estimand     = <span class="tok-str">"AIPE"</span>,
-  compare      = <span class="tok-str">"ALL"</span>,
-  inference    = <span class="tok-str">"bootstrap"</span>,        <span class="tok-com"># cluster-bootstrap if `cluster` is supplied</span>
-  cluster      = <span class="tok-str">"country"</span>
+  data      = robots,
+  Y         = <span class="tok-str">"immig"</span>,
+  D         = <span class="tok-str">"iv_d13_indshock_fo_std"</span>,   <span class="tok-com"># continuous treatment</span>
+  X         = <span class="tok-str">"education"</span>,               <span class="tok-com"># continuous moderator</span>
+  Z         = <span class="tok-fn">c</span>(<span class="tok-str">"age"</span>, <span class="tok-str">"female"</span>),
+  Z_FE      = <span class="tok-fn">c</span>(<span class="tok-str">"nuts"</span>, <span class="tok-str">"cntry_year"</span>),
+  wgt       = <span class="tok-str">"pspwght"</span>,
+  estimand  = <span class="tok-str">"AIPE"</span>,
+  compare   = <span class="tok-str">"ALL"</span>,
+  model     = <span class="tok-str">"GAM"</span>,
+  smooth    = <span class="tok-str">"GCV"</span>,
+  hist_pv   = <span class="tok-str">"rug_1000"</span>,
+  inference = <span class="tok-str">"bootstrap"</span>, B_boot = 500,
+  vce       = <span class="tok-str">"cluster"</span>, cluster = <span class="tok-str">"nuts2_year"</span>
 )</code></pre>
       </div>
 
       <h2><span class="section-num">1.4</span>Key arguments</h2>
       <ul class="content-list">
-        <li><code class="inline">model</code> — <code class="inline">"basis"</code> (poly/B-spline, default) or <code class="inline">"GAM"</code> (mgcv penalized)</li>
-        <li><code class="inline">estimand</code> — <code class="inline">"AIPE"</code> or <code class="inline">"DCAME"</code> (required)</li>
-        <li><code class="inline">inference</code> — <code class="inline">"crossfit"</code> (default, basis only), <code class="inline">"bootstrap"</code>, or <code class="inline">"regular"</code></li>
-        <li><code class="inline">selection</code> — <code class="inline">"CV"</code> (default), <code class="inline">"BIC"</code>, or <code class="inline">"CV_targeted"</code> (AIPE-only)</li>
-        <li><code class="inline">compare</code> — <code class="inline">"LINEAR"</code>, <code class="inline">"DCAME"</code>, <code class="inline">"AIPE"</code>, or <code class="inline">"ALL"</code></li>
+        <li><code class="inline">Y</code>, <code class="inline">D</code>, <code class="inline">X</code> — outcome, continuous treatment, moderator (binary or continuous)</li>
+        <li><code class="inline">Z</code>, <code class="inline">Z_FE</code> — additive controls and fixed effects; <code class="inline">Z_FE_absorb = TRUE</code> routes high-cardinality FE through <code class="inline">fixest::feols()</code></li>
+        <li><code class="inline">estimand</code> — <code class="inline">"DCAME"</code> or <code class="inline">"AIPE"</code> (required)</li>
+        <li><code class="inline">compare</code> — <code class="inline">"LINEAR"</code>, <code class="inline">"DCAME"</code>, <code class="inline">"AIPE"</code>, or <code class="inline">"ALL"</code> to put all three on one plot</li>
+        <li><code class="inline">model</code> — <code class="inline">"basis"</code> (poly/B-spline with CV selection, default) or <code class="inline">"GAM"</code> (mgcv penalized smooth)</li>
+        <li><code class="inline">user_spec_0</code>, <code class="inline">user_spec_1</code> — impose a known polynomial degree per group instead of selecting one</li>
+        <li><code class="inline">smooth</code> — <code class="inline">"REML"</code> or <code class="inline">"GCV"</code> for the GAM smoothing parameter</li>
+        <li><code class="inline">inference</code> — <code class="inline">"crossfit"</code>, <code class="inline">"bootstrap"</code> (with <code class="inline">B_boot</code>), or <code class="inline">"regular"</code></li>
+        <li><code class="inline">vce</code>, <code class="inline">cluster</code> — <code class="inline">"robust"</code> or <code class="inline">"cluster"</code> standard errors</li>
+        <li><code class="inline">wgt</code> — survey or sampling weights</li>
+        <li><code class="inline">hist_pv</code> — rug/histogram overlay on the predicted-values panel, e.g. <code class="inline">"rug_1000"</code></li>
       </ul>
-      <p>See <code class="inline">?dcame_aipe</code> for the full argument list, or the <a href="https://github.com/SerranoSerrat/dcameaipe">package README</a> for all three inference paths and the pitfalls the function warns about automatically.</p>
+
+      <div class="callout">
+        <strong>Which inference option?</strong> When the functional form is selected
+        from the data, the standard errors have to account for that first step.
+        <code class="inline">"crossfit"</code> splits the sample so that selection and
+        estimation use independent data; <code class="inline">"bootstrap"</code>
+        re-selects the functional form inside every resample. Bootstrapping gets
+        expensive as <em>n</em> grows; cross-fitting struggles when <em>n</em> is
+        small, because splitting penalizes more complex functional forms. Use
+        <code class="inline">"regular"</code> only when the functional form was fixed
+        in advance (e.g. via <code class="inline">user_spec_*</code>).
+      </div>
+
+      <p>
+        See <code class="inline">?dcame_aipe</code> for the full argument list, or the
+        <a href="https://github.com/SerranoSerrat/dcameaipe">package README</a>.
+      </p>
 
       <div class="page-nav">
         <span></span>
-        <a class="next" href="applications.html"><span class="dir">Next</span>2 · Applications</a>
+        <a class="next" href="theory.html"><span class="dir">Next</span>2 · Theory in Short</a>
       </div>
 
     </div>

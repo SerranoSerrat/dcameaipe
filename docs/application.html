@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>An Application — dcameaipe</title>
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+  onload="renderMathInElement(document.body,{delimiters:[{left:'$$',right:'$$',display:true},{left:'$',right:'$',display:false}]});"></script>
+</head>
+<body>
+
+<button class="nav-toggle" aria-label="Toggle navigation">
+  <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+</button>
+<div class="sidebar-scrim"></div>
+
+<div class="shell">
+
+  <nav class="sidebar">
+    <p class="sidebar-title">dcameaipe</p>
+    <p class="sidebar-subtitle">R Package Documentation</p>
+
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" placeholder="Search docs…" aria-label="Search documentation">
+    </div>
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="index.html">Welcome</a></li>
+      </ul>
+    </div>
+
+    <div class="nav-group">
+      <ol class="nav-numbered">
+        <li><a href="get-started.html">Get Started</a></li>
+        <li><a href="theory.html">Theory in Short</a></li>
+        <li><a href="application.html">An Application</a></li>
+        <li><a href="discussion.html">Further Discussion</a></li>
+      </ol>
+    </div>
+
+    <hr class="sidebar-divider">
+
+    <div class="nav-group">
+      <ul class="nav-plain">
+        <li><a href="changelog.html">Changelog</a></li>
+        <li><a href="references.html">References</a></li>
+      </ul>
+    </div>
+
+    <p class="sidebar-note">MIT licensed · <a href="https://github.com/SerranoSerrat/dcameaipe">Source on GitHub ↗</a></p>
+  </nav>
+
+  <main class="main">
+    <div class="content">
+
+      <p class="eyebrow">Chapter 3</p>
+      <h1><span class="chapter-num">3</span>An Application</h1>
+      <p class="lede">
+        The paper's worked examples, with the code that produces them. First a stylized
+        data-generating process where we know the right answer, then a real application
+        where the three estimands disagree by a factor of three.
+      </p>
+
+      <p>
+        Everything below comes from the replication package at
+        <a href="https://osf.io/8tx6g/">osf.io/8tx6g</a>. Plots returned in
+        <code class="inline">res$plot</code> are <code class="inline">ggplot</code>
+        objects, so <code class="inline">ggsave()</code> works as usual.
+      </p>
+
+      <h2><span class="section-num">3.1</span>A stylized example first</h2>
+      <p>
+        Before the real data, it helps to run the machinery on a DGP where the truth is
+        known. <code class="inline">DGP2</code> (described in the paper's online supplement
+        B) has an inverse U-shaped relationship between $D$ and $Y$ for both groups, and —
+        crucially — the two groups are exposed to $D$ very differently.
+      </p>
+
+      <div class="code-block">
+        <pre><code><span class="tok-fn">library</span>(haven)
+<span class="tok-fn">library</span>(dcameaipe)
+
+DGP2 &lt;- <span class="tok-fn">read_dta</span>(<span class="tok-str">"DGP2.dta"</span>)
+
+res_fig_3 &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data        = DGP2,
+  Y           = <span class="tok-str">"Y"</span>, D = <span class="tok-str">"D"</span>, X = <span class="tok-str">"X"</span>,
+  estimand    = <span class="tok-str">"DCAME"</span>,
+  user_spec_0 = 2,          <span class="tok-com"># quadratic for X = 0</span>
+  user_spec_1 = 3,          <span class="tok-com"># cubic for X = 1</span>
+  inference   = <span class="tok-str">"regular"</span>,
+  vce         = <span class="tok-str">"robust"</span>)
+
+<span class="tok-fn">print</span>(res_fig_3$plot)</code></pre>
+      </div>
+
+      <p>
+        Note <code class="inline">user_spec_0</code> and
+        <code class="inline">user_spec_1</code>: here the functional form is
+        <em>imposed</em> rather than selected, because we know it. That is why
+        <code class="inline">inference = "regular"</code> is legitimate — there is no
+        model-selection step whose uncertainty needs to be recovered. In any real
+        application you would leave the specification to be chosen and switch to
+        <code class="inline">"crossfit"</code> or <code class="inline">"bootstrap"</code>.
+      </p>
+
+      <figure style="margin:2em 0;">
+        <img src="img/figure3.png" alt="Left panel: predicted values by group. Right panel: CAME for each group and their difference." style="width:100%; height:auto; display:block; border:1px solid #e6e6e9; border-radius:4px;">
+        <figcaption style="margin-top:.7em; font-size:.85rem; color:#5b5b60; line-height:1.5;">
+          <strong>Figure 3.</strong> Estimated D-CAME. Left: predicted values with 84
+          percent intervals and a rug of $D$ for each group. Right: the CAME for each
+          group and their difference, with 95 percent intervals.
+        </figcaption>
+      </figure>
+
+      <p>
+        Both groups show an inverse U-shape. Predicted values are lower for group 1, but
+        the gap shrinks monotonically as $D$ rises and eventually vanishes. The right
+        panel shows why the D-CAME comes out negative and significant: group 1's exposure
+        is concentrated at high values of $D$, where the curve has turned downward, so its
+        CAME loads on the negative part of the slope. Group 0's CAME is close to zero and
+        insignificant. Nothing here is about group 1 <em>responding</em> differently — it
+        is about group 1 <em>being somewhere else on the curve</em>.
+      </p>
+
+      <p>
+        Re-running with <code class="inline">estimand = "AIPE"</code> and
+        <code class="inline">compare = "ALL"</code> makes that explicit:
+      </p>
+
+      <div class="code-block">
+        <pre><code>res_fig_4 &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data        = DGP2,
+  Y           = <span class="tok-str">"Y"</span>, D = <span class="tok-str">"D"</span>, X = <span class="tok-str">"X"</span>,
+  model       = <span class="tok-str">"basis"</span>,
+  estimand    = <span class="tok-str">"AIPE"</span>,
+  user_spec_0 = 2,
+  user_spec_1 = 3,
+  inference   = <span class="tok-str">"regular"</span>,
+  vce         = <span class="tok-str">"robust"</span>,
+  compare     = <span class="tok-str">"ALL"</span>       <span class="tok-com"># linear coefficient, D-CAME and AIPE side by side</span>
+)
+
+<span class="tok-fn">print</span>(res_fig_4$plot)</code></pre>
+      </div>
+
+      <figure style="margin:2em 0;">
+        <img src="img/figure4.png" alt="Three panels: predicted values, interactive partial effects across D, and the linear, D-CAME and AIPE estimands compared" style="width:100%; height:auto; display:block; border:1px solid #e6e6e9; border-radius:4px;">
+        <figcaption style="margin-top:.7em; font-size:.85rem; color:#5b5b60; line-height:1.5;">
+          <strong>Figure 4.</strong> Estimated AIPE. Left: predicted values. Middle:
+          estimated IPEs across the range of $D$. Right: the linear interaction
+          coefficient alongside the estimated D-CAME and AIPE.
+        </figcaption>
+      </figure>
+
+      <p>
+        The middle panel is the new information: the IPEs are large and positive at low
+        $D$, then decline monotonically to zero and lose significance at high $D$. Averaged
+        over the pooled distribution of $D$, the AIPE is <strong>positive and
+        significant</strong> — the exact opposite sign to the D-CAME.
+      </p>
+      <p>
+        And the linear model? It returns a coefficient that is not significant. It sits
+        above the estimated D-CAME rather than at it, and the Yitzhaki logic explains why:
+        for group 1 the implicit OLS weights load on low values of $D$, where the variance
+        of $D$ is greater and where the relationship is more positive. Three numbers from
+        one dataset, all defensible arithmetic, all answering different questions — and only
+        two of them answer a question anyone posed.
+      </p>
+
+      <h2><span class="section-num">3.2</span>Robots, education, and anti-immigration attitudes</h2>
+      <p>
+        The empirical illustration revisits a well-known finding: exposure to industrial
+        robots increases support for anti-immigration positions, and education moderates
+        that response. The data are the replication files from Anelli, Colantone and Stanig
+        (2021) — the first seven rounds of the European Social Survey, pooled cross-sections
+        from 2002 to 2015, working-age respondents aged 18 to 65, $N = 154{,}646$.
+      </p>
+      <ul class="content-list">
+        <li><strong>Outcome</strong> — anti-immigration attitudes, from self-reported items on economic and cultural concerns and on whether immigrants make the country a better place to live.</li>
+        <li><strong>Treatment</strong> — robotization exposure: the routinization of tasks in each occupation multiplied by the change in the number of robots in that country-year, weighted by an individual's probability of working in each occupation given pretreatment age, gender, education and region. The analysis uses the instrument, reporting reduced-form results, and the variable is standardized.</li>
+        <li><strong>Moderator</strong> — years of education, kept continuous.</li>
+        <li><strong>Controls</strong> — age and gender, plus NUTS2 region and country-year fixed effects. Poststratification weights throughout; standard errors clustered at the region-year level.</li>
+      </ul>
+
+      <div class="code-block">
+        <pre><code>robots &lt;- <span class="tok-fn">read_dta</span>(<span class="tok-str">"application_robots/data_adequated_robots_interactions.dta"</span>)
+
+Z_FEs      &lt;- <span class="tok-fn">c</span>(<span class="tok-str">"nuts"</span>, <span class="tok-str">"cntry_year"</span>)
+Z_controls &lt;- <span class="tok-fn">c</span>(<span class="tok-str">"age"</span>, <span class="tok-str">"female"</span>)
+
+<span class="tok-fn">set.seed</span>(1234)
+
+results &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data      = robots,
+  Y         = <span class="tok-str">"immig"</span>,
+  D         = <span class="tok-str">"iv_d13_indshock_fo_std"</span>,   <span class="tok-com"># continuous treatment</span>
+  X         = <span class="tok-str">"education"</span>,
+  Z         = Z_controls,
+  Z_FE      = Z_FEs,
+  wgt       = <span class="tok-str">"pspwght"</span>,
+  estimand  = <span class="tok-str">"AIPE"</span>,
+  compare   = <span class="tok-str">"ALL"</span>,
+  model     = <span class="tok-str">"GAM"</span>,
+  smooth    = <span class="tok-str">"GCV"</span>,
+  hist_pv   = <span class="tok-str">"rug_1000"</span>,
+  inference = <span class="tok-str">"bootstrap"</span>, B_boot = 500,
+  vce       = <span class="tok-str">"cluster"</span>,   cluster = <span class="tok-str">"nuts2_year"</span>)
+
+<span class="tok-fn">print</span>(results$plot)</code></pre>
+      </div>
+
+      <div class="callout">
+        <strong>This one takes a while.</strong> 500 block-cluster bootstrap replications,
+        each refitting the GAM and reselecting the smoothing parameter, on 155,000
+        observations. <code class="inline">smooth = "GCV"</code> rather than
+        <code class="inline">"REML"</code> is a deliberate concession to that cost — see
+        §3.3. Set the seed if you want reproducible intervals.
+      </div>
+
+      <figure style="margin:2em 0;">
+        <img src="img/figure7.png" alt="Three panels for the robotization application: predicted values by education level, interactive partial effects, and the linear, D-CAME and AIPE estimands" style="width:100%; height:auto; display:block; border:1px solid #e6e6e9; border-radius:4px;">
+        <figcaption style="margin-top:.7em; font-size:.85rem; color:#5b5b60; line-height:1.5;">
+          <strong>Figure 7.</strong> Robotization, education and anti-immigration
+          attitudes. GAM with GCV smoothing; 500 cluster bootstrap samples clustered at
+          the NUTS2-year level. High education is evaluated at 16 years, low education at
+          9. $N = 154{,}646$.
+        </figcaption>
+      </figure>
+
+      <h3 style="font-size:1.02rem; margin-top:1.8em;">Reading the three panels</h3>
+      <p>
+        <strong>Predicted values.</strong> Robotization raises anti-immigration attitudes
+        monotonically for both education groups, and the curve is clearly concave: the
+        increase is steep at low levels of exposure and flattens out at high levels. The
+        two curves have much the same shape. The rug underneath shows the thing that
+        matters most for what follows — the highly educated are concentrated at lower
+        exposure.
+      </p>
+      <p>
+        <strong>Interactive partial effects.</strong> The IPEs wander above and below zero
+        across the range of $D$ and are not statistically significant anywhere. At
+        comparable levels of robotization exposure, the low- and highly educated respond
+        to robots in much the same way.
+      </p>
+      <p>
+        <strong>The estimands.</strong> Here the three approaches part company:
+      </p>
+
+      <table style="width:100%; border-collapse:collapse; margin:1.4em 0; font-size:.92rem;">
+        <thead>
+          <tr>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Estimand</th>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Estimate</th>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Reads as</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2;">Linear interaction</td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2;">0.11</td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2;">A one-SD rise in exposure raises anti-immigration concerns by 0.11 SD more for the highly educated.</td>
+          </tr>
+          <tr>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2;">D-CAME</td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2;"><strong>0.33</strong></td>
+            <td style="padding:.6em .8em; border-bottom:1px solid #f0f0f2;">Three times the linear estimate. Given the exposure each group actually has, a generalized rise in robotization moves the highly educated substantially more.</td>
+          </tr>
+          <tr>
+            <td style="padding:.6em .8em;">AIPE</td>
+            <td style="padding:.6em .8em;"><strong>≈ 0</strong>, n.s.</td>
+            <td style="padding:.6em .8em;">At similar levels of exposure, education makes no difference to how people respond.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The gap between the D-CAME and the AIPE has a clean explanation, and it is exactly
+        the $\Delta$ term from <a href="theory.html">§2.4</a>. Marginal effects of
+        robotization are decreasing, and the highly educated are less exposed. Their CAME
+        therefore averages slopes drawn from the steep early part of the curve, while the
+        low-educated group's CAME averages slopes from the flat tail. Different positions
+        on a shared curve, not different curves.
+      </p>
+      <p>
+        The gap between the linear coefficient and the D-CAME is a separate problem. Both
+        are attempts at the same quantity; the linear model recovers a third of it, because
+        forcing a straight line through a concave relationship reweights the slopes by
+        where $D$ has variance rather than by where each group actually sits.
+      </p>
+
+      <div class="callout">
+        <strong>What changes substantively.</strong> The descriptive finding survives: as
+        robotization spreads, the educational gradient in anti-immigration attitudes really
+        does widen, and by more than the linear model suggests. What does not survive is the
+        mechanism reading — that education itself changes how people metabolize an economic
+        shock. The AIPE for that claim is zero. Reporting only the linear coefficient would
+        have understated the first conclusion and licensed the second.
+      </div>
+
+      <h2><span class="section-num">3.3</span>A robustness check on the smoothing parameter</h2>
+      <p>
+        GCV is a computationally cheap approximation to leave-one-out cross-validation, and
+        it can undersmooth — a concern mainly in small samples, which is not the situation
+        here. Still, the appendix refits with REML to confirm that the smoothing choice is
+        not doing the work:
+      </p>
+
+      <div class="code-block">
+        <pre><code>results_robot_reml &lt;- <span class="tok-fn">dcame_aipe</span>(
+  data     = robots,
+  Y        = <span class="tok-str">"immig"</span>,
+  D        = <span class="tok-str">"iv_d13_indshock_fo_std"</span>,
+  X        = <span class="tok-str">"education"</span>,
+  Z        = Z_controls,
+  Z_FE     = Z_FEs,
+  wgt      = <span class="tok-str">"pspwght"</span>,
+  estimand = <span class="tok-str">"AIPE"</span>,
+  compare  = <span class="tok-str">"ALL"</span>,
+  hist_pv  = <span class="tok-str">"rug_1000"</span>,
+  model    = <span class="tok-str">"GAM"</span>,
+  smooth   = <span class="tok-str">"REML"</span>)</code></pre>
+      </div>
+
+      <p>
+        Point estimates are similar. As a rule of thumb: REML outperforms GCV when the
+        sample is not large, and GCV is worth its slight undersmoothing when REML would make
+        a bootstrap infeasible.
+      </p>
+
+      <div class="page-nav">
+        <a href="theory.html"><span class="dir">Previous</span>2 · Theory in Short</a>
+        <a class="next" href="discussion.html"><span class="dir">Next</span>4 · Further Discussion</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="js/main.js"></script>
+</body>
+</html>

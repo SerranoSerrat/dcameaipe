@@ -33,8 +33,9 @@
     <div class="nav-group">
       <ol class="nav-numbered">
         <li><a href="get-started.html">Get Started</a></li>
-        <li><a href="applications.html">Applications</a></li>
-        <li><a href="implications.html">Implications</a></li>
+        <li><a href="theory.html">Theory in Short</a></li>
+        <li><a href="application.html">An Application</a></li>
+        <li><a href="discussion.html">Further Discussion</a></li>
       </ol>
     </div>
 
@@ -55,14 +56,21 @@
 
       <p class="eyebrow">Reading</p>
       <h1>References</h1>
-      <p class="lede">The paper behind this package, and related reading.</p>
+      <p class="lede">The paper behind this package, and the debate it joins.</p>
+
+      <h2><span class="section-num">·</span>The paper</h2>
 
       <div class="ref-item">
-        <strong>Quantities of Interest for Interactions and the Pitfalls of Assuming Linear Treatment Effects.</strong>
+        <strong>Serrano-Serrat, Josep. 2026. “Quantities of Interest for Interactions and the Pitfalls of Assuming Linear Treatment Effects.”</strong>
         <div class="ref-meta">
-          <em>Sociological Science</em>, 13 (2026): 945–970 ·
+          <em>Sociological Science</em> 13: 945–970 · DOI 10.15195/v13.a36 ·
           <a href="https://sociologicalscience.com/articles-v13-36-945">sociologicalscience.com/articles-v13-36-945</a>
         </div>
+        <p style="margin: 10px 0 0; font-size: 0.88rem;">
+          Open access. Replication materials — including the code reproduced in
+          <a href="application.html">Chapter 3</a> — are at
+          <a href="https://osf.io/8tx6g/">osf.io/8tx6g</a>.
+        </p>
       </div>
 
       <div class="ref-item">
@@ -70,12 +78,79 @@
         <div class="ref-meta">
           <a href="https://github.com/SerranoSerrat/dcameaipe">github.com/SerranoSerrat/dcameaipe</a> · MIT license
         </div>
-        <p style="margin: 10px 0 0; font-size: 0.88rem;">If you use the package, cite:</p>
+        <p style="margin: 10px 0 0; font-size: 0.88rem;">If you use the package, cite the article:</p>
         <div class="code-block" style="margin: 8px 0 0;">
-          <pre><code>Serrano-Serrat, J. (2026). Quantities of Interest for Interactions and the Pitfalls of Assuming Linear Treatment Effects. Sociological Science.</code></pre>
+          <pre><code>Serrano-Serrat, Josep. 2026. "Quantities of Interest for Interactions
+and the Pitfalls of Assuming Linear Treatment Effects."
+Sociological Science 13: 945-970. doi:10.15195/v13.a36</code></pre>
         </div>
       </div>
 
+      <h2><span class="section-num">·</span>The debate on estimating interactions</h2>
+
+      <div class="ref-item">
+        <strong>Hainmueller, Jens, Jonathan Mummolo, and Yiqing Xu. 2019. “How Much Should We Trust Estimates from Multiplicative Interaction Models? Simple Tools to Improve Empirical Practice.”</strong>
+        <div class="ref-meta"><em>Political Analysis</em> 27(2): 163–192 · the binning and kernel estimators, and the <code class="inline">interflex</code> package</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Simonsohn, Uri. 2024. “Interacting with Curves: How to Validly Test and Probe Interactions in the Real (Nonlinear) World.”</strong>
+        <div class="ref-meta"><em>Advances in Methods and Practices in Psychological Science</em> 7(1) · the critique, arguing for comparisons at similar treatment intensities</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Hainmueller, Jens, Jiehan Liu, Ziyi Liu, Jonathan Mummolo, and Yiqing Xu. 2025. “A Response to Recent Critiques of Hainmueller, Mummolo and Xu (2019) on Estimating Conditional Relationships.”</strong>
+        <div class="ref-meta">arXiv:2502.05717 · the reply, and the source of the simulation revisited in <a href="discussion.html">§4.2</a></div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Liu, Jiehan, Ziyi Liu, and Yiqing Xu. 2025. “A Practical Guide to Estimating Conditional Marginal Effects: Modern Approaches.”</strong>
+        <div class="ref-meta">arXiv:2504.01355</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Zhirnov, Andrei, Mert Moral, and Evgeny Sedashov. 2023. “Taking Distributions Seriously: On the Interpretation of the Estimates of Interactive Nonlinear Models.”</strong>
+        <div class="ref-meta"><em>Political Analysis</em> 31(2): 213–234 · the distribution-weighted average marginal effect, for interactions in GLMs</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Brambor, Thomas, William Roberts Clark, and Matt Golder. 2006. “Understanding Interaction Models: Improving Empirical Analyses.”</strong>
+        <div class="ref-meta"><em>Political Analysis</em> 14(1): 63–82 · the reference point for current practice</div>
+      </div>
+
+      <h2><span class="section-num">·</span>Estimands, presentation, and estimation</h2>
+
+      <div class="ref-item">
+        <strong>Lundberg, Ian, Rebecca Johnson, and Brandon M. Stewart. 2021. “What Is Your Estimand? Defining the Target Quantity Connects Statistical Evidence to Theory.”</strong>
+        <div class="ref-meta"><em>American Sociological Review</em> 86(3): 532–565</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Mize, Trenton D. 2019. “Best Practices for Estimating, Interpreting, and Presenting Nonlinear Interaction Effects.”</strong>
+        <div class="ref-meta"><em>Sociological Science</em> 6: 81–117 · the presentation conventions followed by the package's plots</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Yitzhaki, Shlomo. 1996. “On Using Linear Regressions in Welfare Economics.”</strong>
+        <div class="ref-meta"><em>Journal of Business &amp; Economic Statistics</em> 14(4): 478–486 · what OLS coefficients actually weight</div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Wood, Simon N. 2017. <em>Generalized Additive Models: An Introduction with R.</em></strong>
+        <div class="ref-meta">CRC Press · the reference for the <code class="inline">mgcv</code> machinery behind <code class="inline">model = "GAM"</code></div>
+      </div>
+
+      <div class="ref-item">
+        <strong>Blackwell, Matthew, and Michael P. Olson. 2021. “Reducing Model Misspecification and Bias in the Estimation of Interactions.”</strong>
+        <div class="ref-meta"><em>Political Analysis</em> 30(4): 495–514 · on missing interactions with covariates, discussed in <a href="discussion.html">§4.3</a></div>
+      </div>
+
+      <h2><span class="section-num">·</span>Data used in the application</h2>
+
+      <div class="ref-item">
+        <strong>Anelli, Massimo, Italo Colantone, and Piero Stanig. 2021. “Individual Vulnerability to Industrial Robot Adoption Increases Support for the Radical Right.”</strong>
+        <div class="ref-meta"><em>PNAS</em> 118(47): e2111611118 · the replication data behind <a href="application.html">§3.2</a></div>
+      </div>
 
     </div>
   </main>

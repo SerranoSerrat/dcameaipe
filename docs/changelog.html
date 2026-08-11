@@ -33,8 +33,9 @@
     <div class="nav-group">
       <ol class="nav-numbered">
         <li><a href="get-started.html">Get Started</a></li>
-        <li><a href="applications.html">Applications</a></li>
-        <li><a href="implications.html">Implications</a></li>
+        <li><a href="theory.html">Theory in Short</a></li>
+        <li><a href="application.html">An Application</a></li>
+        <li><a href="discussion.html">Further Discussion</a></li>
       </ol>
     </div>
 
@@ -57,16 +58,17 @@
       <h1>Changelog</h1>
       <p class="lede">Notable changes to the package, newest first.</p>
 
-      <div class="todo">
-        <strong>TODO —</strong> replace with your real release history. Keep entries
-        short and dated; link to GitHub releases/tags if you have them.
-      </div>
-
       <h2><span class="section-num">·</span>v0.1.0 <span style="color:var(--text-faint); font-weight:400; font-size:0.85em;">— TODO: date</span></h2>
+      <p style="font-size:.93rem;">
+        Initial release, accompanying the <em>Sociological Science</em> article.
+      </p>
       <ul class="content-list">
-        <li>Initial release: TODO summarize core functions</li>
-        <li>TODO: dCAME / AIPE estimators</li>
-        <li>TODO: plotting methods</li>
+        <li><code class="inline">dcame_aipe()</code> — estimates the D-CAME and the AIPE from a joint model with group-specific functions of the treatment</li>
+        <li>Two ways to approximate the treatment function: basis regression with cross-validated selection over polynomials and splines (<code class="inline">model = "basis"</code>), and penalized GAM smooths via <code class="inline">mgcv</code> (<code class="inline">model = "GAM"</code>)</li>
+        <li>Three inference paths — <code class="inline">"crossfit"</code>, <code class="inline">"bootstrap"</code> (including block cluster bootstrap) and <code class="inline">"regular"</code> — so that model-selection uncertainty is carried into the standard errors</li>
+        <li><code class="inline">compare = "ALL"</code> reports the linear interaction coefficient, the D-CAME and the AIPE side by side</li>
+        <li>Plot method combining predicted values, interactive partial effects and the estimand comparison, following Mize (2019)</li>
+        <li>Support for continuous moderators via tercile binning (basis) or a bivariate smooth (GAM), additive controls, fixed effects with optional <code class="inline">fixest</code> absorption, and survey weights</li>
       </ul>
 
     </div>
