@@ -61,9 +61,9 @@
       <p class="eyebrow">Chapter 4</p>
       <h1><span class="chapter-num">4</span>Further Discussion</h1>
       <p class="lede">
-        Open threads: what happens when the non-linearity sits somewhere else, what
+        This is a superficial discussion on several topics: what happens when the non-linearity sits somewhere else, what
         controls do to the quantity of interest, and how the framework changes when the
-        treatment takes a handful of discrete values.
+        treatment is a multi-valued discrete variable.
       </p>
 
       <h2><span class="section-num">4.1</span>Three places non-linearity can hide</h2>
@@ -74,24 +74,23 @@
       </p>
       <ul class="content-list">
         <li>
-          <strong>Non-linear treatment effects.</strong> $E[Y \mid D, X]$ bends in $D$:
-          the effect of one more unit of treatment depends on how much treatment you have
+          <strong>Non-linear treatment effects:</strong> the effect of one more unit of treatment depends 
+	  on how much treatment you have
           already had. This is what the paper is about, and it is what drives a wedge
           between D-CAME and AIPE.
         </li>
         <li>
-          <strong>Non-linear moderation.</strong> The conditional marginal effect bends
-          in $X$: the standard product term $\beta^{L}(D \times X)$ forces the effect of
+          <strong>Non-linear moderation:</strong> the standard product term $\beta^{L}(D \times X)$ forces the effect of
           $D$ to move linearly across levels of the moderator. This is the problem
-          Hainmueller, Mummolo and Xu (2019, HMX) set out to solve with binning and kernel
+          <a href="https://www.cambridge.org/core/journals/political-analysis/article/how-much-should-we-trust-estimates-from-multiplicative-interaction-models-simple-tools-to-improve-empirical-practice/D8CAACB473F9B1EE256F43B38E458706" target="_blank">Hainmueller, Mummolo and Xu (2019, HMX)</a> set out to solve with binning and kernel
           estimators. §4.2 takes it up.
         </li>
         <li>
-          <strong>Non-linear link functions.</strong> Logit, probit, Poisson and the rest
-          impose non-linearity in the treatment by construction, through compression —
-          marginal effects vary with $D$ and with every covariate even when no product
-          term appears in the index. The estimand logic carries over, but the covariate
-          bookkeeping does not, and it deserves its own treatment. <em>Left for a future
+          <strong>Non-linear link functions ("Non-linear models"):</strong> Logit or probit, among other models,
+          impose non-linearity in the treatment by construction, through compression.
+          Marginal effects vary with $D$ and with every covariate even when no product
+          term appears in the index. The estimand logic carries over, but the 
+	  role of covariates deserves its own treatment. <em> This is left for a future
           iteration of this document.</em>
         </li>
       </ul>
@@ -107,205 +106,268 @@
       <p>
         HMX and the subsequent literature deliver the conditional marginal effect as a
         <em>function</em>: $\theta(x) = E[\partial Y_i(d)/\partial d \mid X_i = x]$, plotted
-        across the support of the moderator with pointwise and uniform confidence bands.
+        across the support of the moderator.
         In the vocabulary of <a href="theory.html">Chapter 2</a>, that curve is the CAME
-        evaluated at each moderator value.
+        evaluated at each value of the moderator.
       </p>
       <p>
         What that literature does not supply is a summary of the interactive effect
         itself. A plotted curve tells you the effect is larger at high $X$ than at low $X$;
-        it does not give you a number for “how much larger, on average” with an interval
-        attached, and readers end up eyeballing whether two bands overlap. The natural
+        but it does not give you a number for “how much larger, on average”. The natural
         summaries are already available in this framework: the D-CAME as a contrast between
         representative moderator values, and — where the question is about mechanisms — the
         AIPE. Reporting whether, on average, treatment effects are more positive or more
         negative at higher moderator values is a small addition to current practice with a
-        real payoff in interpretability.
+        real payoff in interpretability. In the same way that IPE can be aggregated to estimate AIPE, 
+	a similar procedure could be used in this case. 
+
       </p>
 
-      <h3 style="font-size:1.02rem; margin-top:1.6em;">Discrete treatment, continuous moderator: the mirror image</h3>
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">Discrete treatment, continuous moderator</h3>
       <p>
         Take the other canonical setup — $D$ binary, $X$ continuous. Here D-CAME is the
-        only quantity in play, since comparing “at similar treatment intensities” is
-        vacuous when there are only two intensities. But the argument of the paper runs
-        again with the roles of $D$ and $X$ exchanged.
-      </p>
-      <p>
-        The product-term model assumes $\theta(x)$ is linear in $x$. If it is not, OLS does
-        not return an average of $\theta(x)$ over any theoretically motivated population.
-        It returns a Yitzhaki-weighted average, with weights set by the distance of $X_i$
-        from the median of $X$ and the local variance of $X$ — and when $D$ and $X$ are
-        correlated, those weights are not innocuous. Same logic, same failure mode, same
-        conclusion: the specification is doing work that has to be defended rather than
-        assumed. This is exactly HMX's point, and their binning and kernel estimators are
-        the right response to it.
+        only quantity of interest, since comparing “at similar treatment intensities” is
+        redundant when there are only two intensities. However, taking non-linearities of the
+	moderator into account is still relevant to estimate the CAME function (see <a href="https://www.cambridge.org/core/journals/political-science-research-and-methods/article/problems-with-products-control-strategies-for-models-with-interaction-and-quadratic-effects/9108B4F38CB8759B55C4667D34A9738A" target="_blank"> Beiser-McGrath and Beiser-McGrath (2020)</a>).
       </p>
 
-      <h3 style="font-size:1.02rem; margin-top:1.6em;">What the kernel estimator relies on</h3>
-      <p>
-        Hainmueller, Liu, Liu, Mummolo and Xu (2025) respond to Simonsohn's critique by
-        showing that, once the estimand is properly defined as the CME, their kernel
-        estimator recovers it — even when $Y$ depends on $D$ quadratically and $D$ and $X$
-        are correlated. Their Figure 2 makes the case with the DGP
-      </p>
-      $$Y = D^2 - 0.5D + \varepsilon, \qquad (D, X) \sim N\!\left(0, \begin{bmatrix}1 & 0.5\\ 0.5 & 1\end{bmatrix}\right)$$
-      <p>
-        for which the true CME is $\theta(x) = x - 0.5$, and the kernel estimate tracks it
-        closely. The demonstration is correct. But it is worth being explicit about what
-        makes it work, because the answer is a scope condition rather than a general
-        guarantee.
-      </p>
-      <p>
-        The kernel estimator relaxes linearity <em>in the moderator</em>. Inside each
-        neighbourhood of $X = x_0$ it still runs a linear regression of $Y$ on $D$, so it
-        localizes in $X$ but never in $D$. What it returns in the limit is a linear
-        projection coefficient:
-      </p>
-      $$\hat\theta(x) \;\xrightarrow{p}\; \frac{\operatorname{Cov}(D, Y \mid X = x)}{\operatorname{Var}(D \mid X = x)}$$
-      <p>
-        whereas the estimand is an average derivative,
-        $\theta(x) = E[\,\partial Y/\partial D \mid X = x\,]$. Those two objects are the
-        same thing only under a condition on the conditional distribution of the treatment.
-        Stein's identity gives it exactly: if $D \mid X = x$ is <strong>normal</strong>,
-        then $\operatorname{Cov}(D, g(D)) = \sigma^2 E[g'(D)]$ for any differentiable $g$,
-        and the projection coefficient <em>is</em> the average derivative. Bivariate
-        normality is not a convenience of the example; it is the assumption doing the work.
-      </p>
-      <p>
-        For this specific quadratic outcome the requirement is a little weaker. Using
-        $E[D^3 \mid X] = \mu^3 + 3\mu\sigma^2 + \gamma_1\sigma^3$, where $\gamma_1(x)$ is
-        the skewness of $D \mid X = x$,
-      </p>
-      $$\frac{\operatorname{Cov}(D, Y \mid X=x)}{\operatorname{Var}(D \mid X=x)} \;=\; \underbrace{2\mu(x) - 0.5}_{\theta(x)} \;+\; \underbrace{\gamma_1(x)\,\sigma(x)}_{\text{bias}}$$
-      <p>
-        So the bias is the conditional skewness times the conditional standard deviation.
-        It vanishes whenever $D \mid X$ is conditionally <em>symmetric</em> — under
-        normality, but also under plenty of non-normal distributions. That is why simply
-        making the treatment non-normal does not reveal the problem: you have to make it
-        conditionally skewed.
-      </p>
 
-      <div class="callout">
-        <strong>The Yitzhaki problem, one level down.</strong> The bias term is the same
-        object the paper identifies in the linear interaction model — a linear projection
-        standing in for an average derivative, with weights that come from the geometry of
-        the regression rather than from a theoretical population. The kernel estimator
-        removes it along the moderator dimension and leaves it along the treatment
-        dimension.
-      </div>
-
-      <h3 style="font-size:1.02rem; margin-top:1.6em;">A design that separates the two</h3>
+      <h3 style="font-size:1.02rem; margin-top:1.6em;">The discussion: Is assuming non-linearities with respect to the moderator enough?</h3>
       <p>
-        The <a href="code/kernel-conditional-skewness.R">accompanying script</a> keeps the
-        outcome equation, the correlation, and the first two moments of $D$ fixed, and
-        varies only the shape of $D \mid X$ across three designs:
+        <a href="https://datacolada.org/121">Simonsohn (2024a)</a>, a Data Colada post
+        titled &ldquo;Dear Political Scientists: Don&rsquo;t Bin, GAM Instead,&rdquo; and
+        the accompanying formal article, Simonsohn (2024b, &ldquo;Interacting with
+        Curves&rdquo;), argue that, with observational data, HMX&rsquo;s binning and kernel estimators
+	face a problem: they assume linear treatment effects. When $D$ and
+        $X$ are correlated and either has a non-linear effect on $Y$, the interaction
+        estimate is biased. According to Simonsohn, this is an omitted-variable-bias story, in which the non-linear part
+        of $D$ left out of the model correlates with $D \times X$ precisely because
+        $D$ and $X$ do. Simonsohn&rsquo;s proposed fix is to replace both
+        binning and kernel with a GAM, considering non-linearities with both, $D$ and $X$. 
+      </p>
+      <p>
+        Hainmueller, Liu, Liu, Mummolo and Xu (2025) reply that the critique never states
+        what &ldquo;the interactive effect&rdquo; means. They claim that the quantities of interest is the CAME,
+        $\theta(x) = E[\partial Y_i(d)/\partial d \mid X_i = x]$ — an average derivative,
+        marginalizing over $D$ and any covariates, conditional only on $X$. They show that the kernel approach 
+	that they propose provides unbiased estimates of CAME.
+      </p>
+      <p>
+         This discussion about different quantities of interest when testing interactions is what drives the first part of the paper. <a href="theory.html">Chapter
+        2</a> draws a line between the effect at the exposure a group actually has — an
+        average over that group&rsquo;s own treatment distribution, the CAME, and the
+        D-CAME across groups — and the effect at a common exposure, an average over one
+        shared distribution, the AIPE.      </p>
+      <p>
+        <strong>Then, if D-CAME is the QoI, is assuming non-linear moderator enough?</strong> 
+	The results in the paper suggest that not. For example, the simulation in <a href="theory.html">§2.5</a>
+        sets $X$ to a plain binary indicator, group 1 versus group 0. With only two
+        groups, the moderator is introduced "non-parametrically". This simulation shows that not considering
+	non-linearities in $D$ leads to biased estimates of D-CAME.
+      </p>
+            <p>
+        <strong>Then, why HMX and coauthors find that their kernel approach works?</strong> Two scenarios:
       </p>
       <ul class="content-list">
-        <li><strong>(a) Normal.</strong> $D \sim N(0,1)$ — the HMX benchmark.</li>
         <li>
-          <strong>(b) Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$ where $W$ is
-          the standard normal correlated with $X$. Marginally $D \sim U(-\sqrt3, \sqrt3)$,
-          so $E[D] = 0$, $\operatorname{Var}(D) = 1$ and the unconditional skewness is
-          zero — identical to (a) on every summary a reader would check. But conditionally,
-          $D \mid X$ is squeezed against whichever boundary $X$ pushes it toward:
-          right-skewed at low $x$, left-skewed at high $x$, symmetric only at $x = 0$.
+          <strong>Normal.</strong> $D \mid X$ is normal — symmetric at every $x$.
+          Their benchmark.
         </li>
         <li>
-          <strong>(c) Symmetric uniform.</strong> $D = \rho X + U$ with $U$ uniform. Not
-          normal, but conditionally symmetric. The placebo.
+          <strong>Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$, with
+          $W$ a standard normal correlated with $X$. Marginally $D \sim
+          U(-\sqrt3, \sqrt3)$: same mean, same variance, and zero
+          <em>unconditional</em> skewness. However, conditionally,
+          $D \mid X$ is skewed: right-skewed at low $x$, left-skewed at high $x$, symmetric only at
+          $x = 0$.
         </li>
       </ul>
 
-      <div class="code-block">
-        <pre><code><span class="tok-com"># (b): marginally uniform, conditionally skewed</span>
-S  &lt;- <span class="tok-fn">matrix</span>(<span class="tok-fn">c</span>(1, rho, rho, 1), 2, 2)
-WX &lt;- MASS::<span class="tok-fn">mvrnorm</span>(n, mu = <span class="tok-fn">c</span>(0, 0), Sigma = S)
-W  &lt;- WX[, 1]; X &lt;- WX[, 2]
-
-D &lt;- <span class="tok-fn">sqrt</span>(3) * (2 * <span class="tok-fn">pnorm</span>(W) - 1)          <span class="tok-com"># D ~ U(-sqrt3, sqrt3)</span>
-Y &lt;- D^2 - 0.5 * D + <span class="tok-fn">rnorm</span>(n)
-
-<span class="tok-com"># true CAME: W|X=x ~ N(rho x, 1-rho^2) and E[Phi(W)] = Phi(mu / sqrt(1+s2))</span>
-came_true &lt;- <span class="tok-fn">function</span>(x, rho = 0.5)
-  2 * <span class="tok-fn">sqrt</span>(3) * (2 * <span class="tok-fn">pnorm</span>(rho * x / <span class="tok-fn">sqrt</span>(2 - rho^2)) - 1) - 0.5
-
-d &lt;- <span class="tok-fn">data.frame</span>(Y = Y, D = D, X = X)
-
-out &lt;- <span class="tok-fn">interflex</span>(estimator = <span class="tok-str">"kernel"</span>,
-                 data = d, Y = <span class="tok-str">"Y"</span>, D = <span class="tok-str">"D"</span>, X = <span class="tok-str">"X"</span>,
-                 Ylabel = <span class="tok-str">"Y"</span>, Dlabel = <span class="tok-str">"D"</span>, Xlabel = <span class="tok-str">"X"</span>,
-                 vartype = <span class="tok-str">"bootstrap"</span>,
-                 main = <span class="tok-str">"Kernel model"</span>)</code></pre>
-      </div>
-
       <p>
-        Unlike the normal case, the true CAME here is not a straight line: it is S-shaped
-        and saturating, $\theta(x) = 2\sqrt{3}\,\big(2\Phi(\rho x/\sqrt{2-\rho^2}) - 1\big) - 0.5$.
-        Evaluating at the median of the bottom and top terciles of $X$ ($x = \mp 0.967$)
-        and taking the difference gives the D-CAME implied by the design:
+        The <a href="kernel_plot/kernel_plot.R">companion script</a> takes a single draw of
+        $n = 5{,}000$ from each design and does the simplest possible thing: it runs
+        <a href="https://yiqingxu.org/packages/interflex/">interflex</a>'s kernel
+        estimator, with the package's own cross-validated bandwidth and default settings,
+        and overlays the <em>true</em> CAME in red. The truth here needs no simulation:
+        because $W \mid X = x$ is normal in both designs, $E[D \mid X = x]$ — and with it
+        $\theta(x) = 2\,E[D \mid X = x] - 0.5$ — has a closed form.
       </p>
 
-      <table style="width:100%; border-collapse:collapse; margin:1.5em 0; font-size:.9rem;">
+      <figure class="figure">
+        <img src="kernel_plot/came-kernel-normal.png" alt="Kernel CAME estimate against the true CAME under the normal design. The black estimated curve lies on the red true line across the range where the moderator has mass.">
+        <figcaption>
+          <span class="fig-label">Figure 1.</span> Normal design, where $D \mid X$ is
+          Gaussian at every $x$. Black is interflex's kernel estimate with its 95% band;
+          red is the exact CAME, $\theta(x) = x - 0.5$; the histogram shows where $X$
+          actually has mass. The estimate sits on the truth throughout the bulk of the
+          data, parting from it only in the sparse tails. This is HMX's benchmark, and it
+          works.
+        </figcaption>
+      </figure>
+
+      <figure class="figure">
+        <img src="kernel_plot/came-kernel-copula.png" alt="Kernel CAME estimate against the true CAME under the copula design. The black estimated curve is markedly flatter than the red true line, crossing it at x equals zero.">
+        <figcaption>
+          <span class="fig-label">Figure 2.</span> Copula design, where $D \mid X$ is
+          skewed and symmetric only at $x = 0$. Same estimator, same $n$, same
+          $\mathrm{corr}(D, X) = 0.5$, same marginal mean and variance of $D$. The
+          estimated curve is now visibly <em>flatter</em> than the truth — above it at
+          low $x$, below it at high $x$ — and the two cross at $x = 0$.
+        </figcaption>
+      </figure>
+
+      <p>
+        The two panels differ in exactly one respect — the shape of $D$ within each value
+        of the moderator. Everything a researcher would normally check is held fixed
+        across them. Yet the estimator that lands on the truth in Figure 1 keeps roughly
+        half the slope in Figure 2. The flattening is not noise: the band is narrow and
+        sits nowhere near the red line over most of the range, and it does not shrink with
+        a smaller bandwidth, because it is a property of the local regression's limit
+        rather than of the smoothing.
+      </p>
+      <p>
+        The reason is exact, and worth stating because it says precisely when the kernel is
+        safe. In the small-bandwidth limit, the local linear slope at $x$ is
+        $\operatorname{Cov}(D, Y \mid X = x) / \operatorname{Var}(D \mid X = x)$. For this
+        data-generating process that quantity differs from the CAME by
+      </p>
+      $$\frac{\operatorname{Cov}(D,\,Y \mid X = x)}{\operatorname{Var}(D \mid X = x)} \;-\; \theta(x) \;=\; \gamma(x)\,\sigma(x),$$
+      <p>
+        where $\gamma(x)$ and $\sigma(x)$ are the skewness and the standard deviation of
+        $D \mid X = x$. The bias is the conditional skewness, scaled. Under the normal
+        design $\gamma(x) = 0$ at every $x$, so the kernel is exact <em>however</em> curved
+        the dose–response is — that is Stein's lemma, and it is what makes the benchmark in
+        Figure 1 work. Under the copula design $\gamma(x)$ is positive at low $x$ and
+        negative at high $x$, which is the direction of the gap in Figure 2, and zero only
+        at $x = 0$, which is where the two curves cross.
+      </p>
+
+      <p>
+        What does the flattening cost the number a reader would actually report? Take the
+        D-CAME between the median of the bottom tercile of $X$ and the median of the top
+        tercile — the two evaluation points <code class="inline">dcame_aipe()</code> uses
+        by default. Since the true CAME curve is known in closed form, the truth at those
+        points needs no estimation, and the kernel curve can simply be read off at the
+        same two places.
+      </p>
+
+      <table style="width:100%; border-collapse:collapse; margin:1.6em 0; font-size:.92rem;">
         <thead>
           <tr>
-            <th style="text-align:left; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">Design</th>
-            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">$\gamma_1(x)$ at $x=0.967$</th>
-            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">True D-CAME</th>
-            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">Kernel limit</th>
-            <th style="text-align:right; padding:.6em .7em; border-bottom:2px solid #1c1c1e;">Recovered</th>
+            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Quantity</th>
+            <th style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;">Truth</th>
+            <th style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;">interflex kernel</th>
+            <th style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;"><code class="inline">dcame_aipe()</code></th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2;">(a) Normal</td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">0.00</td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">1.935</td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">1.935</td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;">100%</td>
+            <td colspan="4" style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; font-weight:600;">Normal — $D \mid X$ symmetric</td>
           </tr>
           <tr>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2;"><strong>(b) Copula</strong></td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>−0.52</strong></td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>1.977</strong></td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>1.067</strong></td>
-            <td style="padding:.55em .7em; border-bottom:1px solid #f0f0f2; text-align:right;"><strong>54%</strong></td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = -0.94$ (bottom tercile)</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.44$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.38$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.53$</td>
           </tr>
           <tr>
-            <td style="padding:.55em .7em;">(c) Symmetric uniform</td>
-            <td style="padding:.55em .7em; text-align:right;">0.00</td>
-            <td style="padding:.55em .7em; text-align:right;">1.935</td>
-            <td style="padding:.55em .7em; text-align:right;">1.935</td>
-            <td style="padding:.55em .7em; text-align:right;">100%</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = 0.94$ (top tercile)</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.44$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.33$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.59$</td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9;"><strong>D-CAME</strong></td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; text-align:center;"><strong>$1.89$</strong></td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; text-align:center;">$1.71$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; text-align:center;">$2.13$</td>
+          </tr>
+          <tr>
+            <td colspan="4" style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; font-weight:600;">Copula — $D \mid X$ skewed</td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = -0.99$ (bottom tercile)</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.51$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.01$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.57$</td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = 0.97$ (top tercile)</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.50$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.02$</td>
+            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.62$</td>
+          </tr>
+          <tr>
+            <td style="padding:.55em .8em;"><strong>D-CAME</strong></td>
+            <td style="padding:.55em .8em; text-align:center;"><strong>$2.00$</strong></td>
+            <td style="padding:.55em .8em; text-align:center;"><strong>$1.02$</strong></td>
+            <td style="padding:.55em .8em; text-align:center;">$2.19$</td>
           </tr>
         </tbody>
       </table>
 
       <p>
-        The pattern in design (b) is a compression toward the middle. Because
-        $\gamma_1(x)$ has the opposite sign to $x$, the estimated CAME is pulled up where
-        the truth is low and pulled down where the truth is high. At the top tercile the
-        true CAME is 0.489 and the kernel limit is 0.034 — a genuine effect that would be
-        reported as indistinguishable from zero. The estimated interaction is not
-        spurious, but it is roughly half the size it should be.
+        Under the normal design both are in the right neighbourhood: against a truth of
+        $1.89$, the kernel gives $1.71$ and <code class="inline">dcame_aipe()</code>
+        $2.13$ — one a little low, the other a little high, errors of similar size in
+        opposite directions.
       </p>
       <p>
-        Two features of this are worth noting. First, the bias does not shrink with the
-        bandwidth: it is present in the $h \to 0$ limit and shows up at essentially the same
-        magnitude at $h = 0.5$, $0.3$ and $0.15$. It is an asymptotic bias, not a smoothing
-        artefact, so more data will not help. Second, design (c) recovers the truth exactly
-        — which is the point of including it. The relevant condition is conditional
-        symmetry (here) or conditional normality (in general), not non-normality per se.
+        Under the copula design they part company. The truth is $2.00$.
+        <code class="inline">dcame_aipe()</code> returns $2.19$ — the same modest overshoot
+        it showed in the symmetric case, essentially untouched by the skew. The kernel
+        returns $1.02$: barely half the effect. Its error grows from $0.18$ to $0.98$ the
+        moment the conditional distribution stops being symmetric, while the package's
+        stays at about $0.2$ in both designs. That is the sense in which modelling $D$
+        flexibly buys something here — not that it is uniformly sharper, but that its
+        accuracy does not depend on a symmetry assumption no one checks.
+      </p>
+      <p>
+        The top tercile is the sharpest case. The true CAME there is $+0.50$, a clear
+        positive effect. The kernel puts it at $+0.02$ — a genuine effect that would be
+        written up as indistinguishable from zero — against $+0.62$ from
+        <code class="inline">dcame_aipe()</code>.
+      </p>
+
+      <figure class="figure">
+        <img src="kernel_plot/dcame-copula.png" alt="dcame_aipe output on the copula draw: fitted dose-response curves for the low and high moderator groups on the left, and the two CAMEs with their contrast on the right.">
+        <figcaption>
+          <span class="fig-label">Figure 3.</span>
+          <code class="inline">dcame_aipe()</code> on the copula draw. On the left, the
+          fitted dose–response for the bottom-tercile group ($x = -0.985$) and the
+          top-tercile group ($x = 0.974$) — all but identical, as they should be, since
+          $X$ never enters the outcome equation. What separates the two groups is not the
+          curve but <em>where they sit on it</em>, which is visible in the two rugs. On
+          the right, the resulting CAMEs and their contrast. This is the D-CAME of
+          <a href="theory.html">Chapter 2</a> in its purest form: one common dose–response,
+          two different exposure distributions.
+        </figcaption>
+      </figure>
+
+      <p style="font-size:.92rem; color:#5b5b60;">
+        Two caveats, in fairness. The $\approx 0.2$ overshoot from
+        <code class="inline">dcame_aipe()</code> shows up in both designs, so it is not
+        the skew: with a continuous moderator the GAM path does not trim to common support
+        and evaluates both groups over the full observed range of $D$ (the
+        <code class="inline">"basis"</code> model trims instead). And the kernel is not
+        being misused here — it targets the CAME, which is what it was built for. The
+        point is narrower than "the kernel is biased": the CAME it recovers coincides with
+        the estimand only when $D \mid X$ is symmetric.
       </p>
 
       <div class="callout">
-        <strong>Read this as a scope condition, not a refutation.</strong> HMX are right
-        that the CME is a well-defined estimand and that the critiques aimed at their
-        estimators had not specified one. The kernel estimator does target the CME, and
-        under conditional normality it recovers it. What the amendment adds is when to
-        worry: skewed treatments (income, wealth, exposure measures, counts, anything
-        bounded at zero), or bounded treatments where the moderator pushes some groups
-        against a floor or ceiling. Those are common. A useful habit is to plot $D$ within
-        moderator bins and look at the shape, not just the mean.
+        <strong>An implication to probe, not a verdict.</strong> HMX are right that the
+        CAME is a well-defined estimand and that their kernel estimator targets it; under
+        conditional symmetry it recovers it cleanly, as the normal design here confirms.
+        What this adds is a caution and an invitation. When the treatment is plausibly
+        skewed <em>within</em> moderator groups — income, wealth, exposure measures,
+        counts, anything bounded at zero, or bounded treatments where the moderator pushes
+        some groups against a floor or ceiling — relaxing non-linearity in the moderator
+        alone may not be enough, and modelling the treatment flexibly as well can matter
+        for the estimate. Whether it bites in a given application is an empirical question
+        that is cheap to check: plot $D$ within moderator bins and look at the shape. This
+        is one implication of the paper's logic worth investigating further — not a
+        settled result.
       </div>
 
       <h2><span class="section-num">4.3</span>Controls, and what they do to the estimand</h2>
