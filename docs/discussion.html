@@ -61,7 +61,7 @@
       <p class="eyebrow">Chapter 4</p>
       <h1><span class="chapter-num">4</span>Further Discussion</h1>
       <p class="lede">
-        This is a superficial discussion on several topics: what happens when the non-linearity sits somewhere else, what
+        This is a superficial discussion on several topics: different ways of concieving non-linear interactions, what
         controls do to the quantity of interest, and how the framework changes when the
         treatment is a multi-valued discrete variable.
       </p>
@@ -220,114 +220,9 @@
         The two panels differ in exactly one respect — the shape of $D$ within each value
         of the moderator. Everything a researcher would normally check is held fixed
         across them. Yet the estimator that lands on the truth in Figure 1 keeps roughly
-        half the slope in Figure 2. The flattening is not noise: the band is narrow and
-        sits nowhere near the red line over most of the range, and it does not shrink with
-        a smaller bandwidth, because it is a property of the local regression's limit
-        rather than of the smoothing.
-      </p>
-      <p>
-        The reason is exact, and worth stating because it says precisely when the kernel is
-        safe. In the small-bandwidth limit, the local linear slope at $x$ is
-        $\operatorname{Cov}(D, Y \mid X = x) / \operatorname{Var}(D \mid X = x)$. For this
-        data-generating process that quantity differs from the CAME by
-      </p>
-      $$\frac{\operatorname{Cov}(D,\,Y \mid X = x)}{\operatorname{Var}(D \mid X = x)} \;-\; \theta(x) \;=\; \gamma(x)\,\sigma(x),$$
-      <p>
-        where $\gamma(x)$ and $\sigma(x)$ are the skewness and the standard deviation of
-        $D \mid X = x$. The bias is the conditional skewness, scaled. Under the normal
-        design $\gamma(x) = 0$ at every $x$, so the kernel is exact <em>however</em> curved
-        the dose–response is — that is Stein's lemma, and it is what makes the benchmark in
-        Figure 1 work. Under the copula design $\gamma(x)$ is positive at low $x$ and
-        negative at high $x$, which is the direction of the gap in Figure 2, and zero only
-        at $x = 0$, which is where the two curves cross.
+        half the slope in Figure 2.
       </p>
 
-      <p>
-        What does the flattening cost the number a reader would actually report? Take the
-        D-CAME between the median of the bottom tercile of $X$ and the median of the top
-        tercile — the two evaluation points <code class="inline">dcame_aipe()</code> uses
-        by default. Since the true CAME curve is known in closed form, the truth at those
-        points needs no estimation, and the kernel curve can simply be read off at the
-        same two places.
-      </p>
-
-      <table style="width:100%; border-collapse:collapse; margin:1.6em 0; font-size:.92rem;">
-        <thead>
-          <tr>
-            <th style="text-align:left; padding:.6em .8em; border-bottom:2px solid #1c1c1e;">Quantity</th>
-            <th style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;">Truth</th>
-            <th style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;">interflex kernel</th>
-            <th style="text-align:center; padding:.6em .8em; border-bottom:2px solid #1c1c1e; font-weight:600;"><code class="inline">dcame_aipe()</code></th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="4" style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; font-weight:600;">Normal — $D \mid X$ symmetric</td>
-          </tr>
-          <tr>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = -0.94$ (bottom tercile)</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.44$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.38$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.53$</td>
-          </tr>
-          <tr>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = 0.94$ (top tercile)</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.44$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.33$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.59$</td>
-          </tr>
-          <tr>
-            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9;"><strong>D-CAME</strong></td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; text-align:center;"><strong>$1.89$</strong></td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; text-align:center;">$1.71$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; text-align:center;">$2.13$</td>
-          </tr>
-          <tr>
-            <td colspan="4" style="padding:.55em .8em; border-bottom:1px solid #e6e6e9; font-weight:600;">Copula — $D \mid X$ skewed</td>
-          </tr>
-          <tr>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = -0.99$ (bottom tercile)</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.51$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.01$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$-1.57$</td>
-          </tr>
-          <tr>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2;">CAME at $x = 0.97$ (top tercile)</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.50$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.02$</td>
-            <td style="padding:.55em .8em; border-bottom:1px solid #f0f0f2; text-align:center;">$0.62$</td>
-          </tr>
-          <tr>
-            <td style="padding:.55em .8em;"><strong>D-CAME</strong></td>
-            <td style="padding:.55em .8em; text-align:center;"><strong>$2.00$</strong></td>
-            <td style="padding:.55em .8em; text-align:center;"><strong>$1.02$</strong></td>
-            <td style="padding:.55em .8em; text-align:center;">$2.19$</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <p>
-        Under the normal design both are in the right neighbourhood: against a truth of
-        $1.89$, the kernel gives $1.71$ and <code class="inline">dcame_aipe()</code>
-        $2.13$ — one a little low, the other a little high, errors of similar size in
-        opposite directions.
-      </p>
-      <p>
-        Under the copula design they part company. The truth is $2.00$.
-        <code class="inline">dcame_aipe()</code> returns $2.19$ — the same modest overshoot
-        it showed in the symmetric case, essentially untouched by the skew. The kernel
-        returns $1.02$: barely half the effect. Its error grows from $0.18$ to $0.98$ the
-        moment the conditional distribution stops being symmetric, while the package's
-        stays at about $0.2$ in both designs. That is the sense in which modelling $D$
-        flexibly buys something here — not that it is uniformly sharper, but that its
-        accuracy does not depend on a symmetry assumption no one checks.
-      </p>
-      <p>
-        The top tercile is the sharpest case. The true CAME there is $+0.50$, a clear
-        positive effect. The kernel puts it at $+0.02$ — a genuine effect that would be
-        written up as indistinguishable from zero — against $+0.62$ from
-        <code class="inline">dcame_aipe()</code>.
-      </p>
 
       <figure class="figure">
         <img src="kernel_plot/dcame-copula.png" alt="dcame_aipe output on the copula draw: fitted dose-response curves for the low and high moderator groups on the left, and the two CAMEs with their contrast on the right.">
