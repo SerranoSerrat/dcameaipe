@@ -128,8 +128,7 @@ The function emits explicit warnings (not just verbose notes) for:
 
 If you use this package, please cite:
 
-> Serrano-Serrat, J. (2026). The Pitfalls of Assuming Linear Treatment Effects in
-> Interaction Tests. *Sociological Science*.
+> Serrano-Serrat, J. (2026). Quantities of Interest for Interactions and the Pitfalls of Assuming Linear Treatment Effects. *Sociological Science*, 13, 945-970.
 
 ## License
 
