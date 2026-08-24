@@ -165,8 +165,11 @@
   
 		<strong>Normal.</strong> $D \mid X$ is normal — symmetric at every $x$.
           This is their benchmark. In particular, $(W,X)$ are drawn
-          jointly normal with correlation $\rho$=0.5. As the authors show, since $E[D \mid X=x] = E[W \mid X=x] = \rho x$, 
+          jointly normal with correlation $\rho=0.5$. As the authors show, since $E[D \mid X=x] = \rho x$, 
           the true CAME is therefore <em>linear</em> in $x$:
+		<p>
+</p>
+			
   <p style="text-align:center;">
     $\theta_{normal}(x) = 2\,E[D \mid X = x] - 0.5 = x - 0.5$
   </p>
@@ -179,21 +182,27 @@
           U(-\sqrt3, \sqrt3)$. Crucially, even though $D$ is symmetric,
           $D \mid X$ is skewed: right-skewed at low $x$, left-skewed at high $x$ (symmetric only at
           $x = 0$). Because $W \mid X=x$ is normal, $E[D \mid X=x]$ has a closed form, and it can be shown that the true CAME can be defined as:
-  <p style="text-align:center;">
+  
+			</p>
+		  
+			<p style="text-align:center;">
     $\theta_{copula}(x) = 2\sqrt{3}\left( 2\,\Phi\!\left( \dfrac{0.5 x}{\sqrt{2-0.5^2}} \right) - 1 \right) - 0.5$
   </p>
         </li>
       </ul>
 
       <p>
-        I simulate a single draw using these DGPs, with $n = 5{,}000$.  runs
+        I simulate a single draw using these DGPs, with $n = 5{,}000$. In particular, I run
         <a href="https://yiqingxu.org/packages/interflex/">interflex</a>'s kernel
         estimator, with the package's own cross-validated bandwidth and default settings,
-        and overlays the <em>true</em> CAME in red. The truth here needs no simulation:
-        because $W \mid X = x$ is normal in both designs, $E[D \mid X = x]$ — and with it
-        $\theta(x) = 2\,E[D \mid X = x] - 0.5$ — has a closed form.
+        and overlay the true CAMEs in red. 
       </p>
 
+		Figure 1 shows that when the treatment variable is normally distributed, as the authors demonstrate in their response, 
+		the kernel estimation recovers the true CAME (left panel).
+		However, this is not generally the case when the treatment is not normally distributed (right panel). 
+
+		
       <figure class="figure">
         <img src="kernel_plot/came-kernel-normal.png" alt="Kernel CAME estimate against the true CAME under the normal design. The black estimated curve lies on the red true line across the range where the moderator has mass.">
         <figcaption>
@@ -217,28 +226,7 @@
         </figcaption>
       </figure>
 
-      <p>
-        The two panels differ in exactly one respect — the shape of $D$ within each value
-        of the moderator. Everything a researcher would normally check is held fixed
-        across them. Yet the estimator that lands on the truth in Figure 1 keeps roughly
-        half the slope in Figure 2.
-      </p>
 
-
-      <figure class="figure">
-        <img src="kernel_plot/dcame-copula.png" alt="dcame_aipe output on the copula draw: fitted dose-response curves for the low and high moderator groups on the left, and the two CAMEs with their contrast on the right.">
-        <figcaption>
-          <span class="fig-label">Figure 3.</span>
-          <code class="inline">dcame_aipe()</code> on the copula draw. On the left, the
-          fitted dose–response for the bottom-tercile group ($x = -0.985$) and the
-          top-tercile group ($x = 0.974$) — all but identical, as they should be, since
-          $X$ never enters the outcome equation. What separates the two groups is not the
-          curve but <em>where they sit on it</em>, which is visible in the two rugs. On
-          the right, the resulting CAMEs and their contrast. This is the D-CAME of
-          <a href="theory.html">Chapter 2</a> in its purest form: one common dose–response,
-          two different exposure distributions.
-        </figcaption>
-      </figure>
 
       <p style="font-size:.92rem; color:#5b5b60;">
         Two caveats, in fairness. The $\approx 0.2$ overshoot from
