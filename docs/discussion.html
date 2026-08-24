@@ -147,7 +147,10 @@
       <p>
         My reasoning when I started writing the paper in 2023 was much aligned with Simonsohn approach (even though I had not come about his work at that point). 
 		After reading the response by HMX and coauthors, I was compelled that probably CAME and D-CAME were also usueful quantities to be estimated.
-		At that point, the question was,  <strong> if D-CAME is the QoI, is assuming a non-linear moderator enough?</strong> According to the results of my paper, <strong> no. </strong> 
+		      </p>
+		
+		<p>
+		  At that point, the question was,  <strong> if D-CAME is the QoI, is assuming a non-linear moderator enough?</strong> According to the results of my paper, <strong> no. </strong> 
 		For example, the simulation in <a href="theory.html">§2.5</a> sets $X$ to a plain binary indicator, group 1 versus group 0. 
 		With only two groups, the moderator is introduced "non-parametrically". This simulation shows that not considering
 		non-linearities in $D$ leads to biased estimates of D-CAME.
@@ -159,11 +162,15 @@
       </p>
       <ul class="content-list">
         <li>
-          <strong>Normal.</strong> $D \mid X$ is normal — symmetric at every $x$.
-          Their benchmark. In this case, as the authors show the true CAME is <em>linear</em> in x:
+  
+		<strong>Normal.</strong> $D \mid X$ is normal — symmetric at every $x$.
+          This is their benchmark. In particular, $(W,X)$ are drawn
+          jointly normal with correlation $\rho$=0.5. As the authors show, since $E[D \mid X=x] = E[W \mid X=x] = \rho x$, 
+          the true CAME is therefore <em>linear</em> in $x$:
   <p style="text-align:center;">
-    $\theta_{normal}(x) = 2·E[D | X = x] − 0.5 = 2\rho x − 0.5$
+    $\theta_{normal}(x) = 2\,E[D \mid X = x] - 0.5 = x - 0.5$
   </p>
+			
         </li>
         <li>
           <strong>Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$, with
