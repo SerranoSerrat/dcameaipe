@@ -154,13 +154,16 @@
       </p>
 			
 <p>
-       The next question is, <strong>then, why HMX and coauthors find that their kernel approach works?</strong> I contend that it is because of the distribution of $D$ that they assume.
+       The next question is, <strong>then, why HMX and coauthors find that their kernel approach works?</strong> I contend that it may be because of the distribution of $D$ that they assume.
 	To explore this, I consider two distributions:
       </p>
       <ul class="content-list">
         <li>
           <strong>Normal.</strong> $D \mid X$ is normal — symmetric at every $x$.
-          Their benchmark.
+          Their benchmark. In this case, as the authors show the true CAME is <em>linear</em> in x:
+  <p style="text-align:center;">
+    θ<sub>normal</sub>(x) = 2·E[D | X = x] − 0.5 = 2ρx − 0.5
+  </p>
         </li>
         <li>
           <strong>Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$, with
@@ -173,8 +176,7 @@
       </ul>
 
       <p>
-        The <a href="kernel_plot/kernel_plot.R">companion script</a> takes a single draw of
-        $n = 5{,}000$ from each design and does the simplest possible thing: it runs
+        I simulate a single draw using these DGPs, with $n = 5{,}000$.  runs
         <a href="https://yiqingxu.org/packages/interflex/">interflex</a>'s kernel
         estimator, with the package's own cross-validated bandwidth and default settings,
         and overlays the <em>true</em> CAME in red. The truth here needs no simulation:
