@@ -150,7 +150,7 @@
 		      </p>
 		
 		<p>
-		  At that point, the question was,  <strong> if D-CAME is the QoI, is assuming a non-linear moderator enough?</strong> According to the results of my paper, <strong> no. </strong> 
+		  At that point, the question was,  <strong> if D-CAME is the quantity of interest, is assuming a non-linear moderator enough?</strong> According to the results of my paper, <strong> no. </strong> 
 		For example, the simulation in <a href="theory.html">§2.5</a> sets $X$ to a plain binary indicator, group 1 versus group 0. 
 		With only two groups, the moderator is introduced "non-parametrically". This simulation shows that not considering
 		non-linearities in $D$ leads to biased estimates of D-CAME.
@@ -161,7 +161,7 @@
 	To explore this, I consider two distributions:
       </p>
       <ul class="content-list">
-        <li>
+    <li>
   
 		<strong>Normal.</strong> $D \mid X$ is normal — symmetric at every $x$.
           This is their benchmark. In particular, $(W,X)$ are drawn
@@ -173,12 +173,15 @@
 			
         </li>
         <li>
-          <strong>Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$, with
-          $W$ a standard normal correlated with $X$. Marginally $D \sim
-          U(-\sqrt3, \sqrt3)$: same mean, same variance, and zero
-          <em>unconditional</em> skewness. However, conditionally,
-          $D \mid X$ is skewed: right-skewed at low $x$, left-skewed at high $x$, symmetric only at
-          $x = 0$.
+    <strong>Copula.</strong> $D = \sqrt{3}\,\big(2\Phi(W) - 1\big)$, with
+          $W$ and $X$ drawn jointly standard normal with correlation $\rho=0.5$, so that
+          $W \mid X = x \sim N\!\big(0.5 x,\, 1-0.5^2\big)$. Marginally $D \sim
+          U(-\sqrt3, \sqrt3)$. Crucially, even though $D$ is symmetric,
+          $D \mid X$ is skewed: right-skewed at low $x$, left-skewed at high $x$ (symmetric only at
+          $x = 0$). Because $W \mid X=x$ is normal, $E[D \mid X=x]$ has a closed form, and it can be shown that the true CAME can be defined as:
+  <p style="text-align:center;">
+    $\theta_{copula}(x) = 2\sqrt{3}\left( 2\,\Phi\!\left( \dfrac{0.5 x}{\sqrt{2-0.5^2}} \right) - 1 \right) - 0.5$
+  </p>
         </li>
       </ul>
 
