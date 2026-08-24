@@ -74,30 +74,23 @@
       </p>
       <ul class="content-list">
         <li>
-          <strong>Non-linear treatment effects:</strong> the effect of one more unit of treatment depends 
-	  on how much treatment you have
-          already had. This is what the paper is about, and it is what drives a wedge
-          between D-CAME and AIPE.
+          <strong>Non-linear treatment effects:</strong> The effect of one additional unit of treatment depends on how much treatment exposure you have already had. This is what the paper is about, and it is what drives a wedge between D-CAME and AIPE.
         </li>
         <li>
-          <strong>Non-linear moderation:</strong> the standard product term $\beta^{L}(D \times X)$ forces the effect of
-          $D$ to move linearly across levels of the moderator. This is the problem
+          <strong>Non-linear moderation:</strong> the effect of the treatment is allowed to vary non-linearly across levels of the moderator. Non-linearity of the treatment effects is not considered, and indeed, many times the treatment is binary. This is the problem
           <a href="https://www.cambridge.org/core/journals/political-analysis/article/how-much-should-we-trust-estimates-from-multiplicative-interaction-models-simple-tools-to-improve-empirical-practice/D8CAACB473F9B1EE256F43B38E458706" target="_blank">Hainmueller, Mummolo and Xu (2019, HMX)</a> set out to solve with binning and kernel
           estimators. §4.2 takes it up.
         </li>
         <li>
-          <strong>Non-linear link functions ("Non-linear models"):</strong> Logit or probit, among other models,
-          impose non-linearity in the treatment by construction, through compression.
-          Marginal effects vary with $D$ and with every covariate even when no product
-          term appears in the index. The estimand logic carries over, but the 
-	  role of covariates deserves its own treatment. <em> This is left for a future
+          <strong>Non-linear link functions ("Non-linear models"):</strong> Logit, probit, and related models impose non-linearity in the treatment by construction. 
+			Marginal effects vary with $D$ and with every covariate, even when no product term appears in the index. 
+			The estimand logic carries over, but the role of covariates requires separate consideration. <em> This is left for a future
           iteration of this document.</em>
         </li>
       </ul>
       <p>
-        These are independent. A model can be linear in the treatment and non-linear in
-        the moderator, or the reverse — and the standard interaction specification assumes
-        away both at once.
+        These are independent. A model can be linear in the treatment and non-linear in the moderator, or the reverse.
+		Crucially, the standard linear interaction commonly used in the literature assumes linearity in both.
       </p>
 
       <h2><span class="section-num">4.2</span>Non-linear moderators</h2>
@@ -111,24 +104,17 @@
         evaluated at each value of the moderator.
       </p>
       <p>
-        What that literature does not supply is a summary of the interactive effect
-        itself. A plotted curve tells you the effect is larger at high $X$ than at low $X$;
-        but it does not give you a number for “how much larger, on average”. The natural
-        summaries are already available in this framework: the D-CAME as a contrast between
-        representative moderator values, and — where the question is about mechanisms — the
-        AIPE. Reporting whether, on average, treatment effects are more positive or more
-        negative at higher moderator values is a small addition to current practice with a
-        real payoff in interpretability. In the same way that IPE can be aggregated to estimate AIPE, 
-	a similar procedure could be used in this case. 
+        What that literature does not provide is a summary of the interactive effect itself. A plotted CAME curve may show that the effect of the treatment is larger at high $X$ than at low $X$; however, it does not give you a number for “how much larger, on average”. 
+		  I think researchers could increase the interpretability of their findings by reporting whether, on average, treatment effects are more positive or more negative at higher moderator values. 
+		  In the same way that IPE can be aggregated to estimate AIPE, a similar procedure could be used in this case.
 
       </p>
 
       <h3 style="font-size:1.02rem; margin-top:1.6em;">Discrete treatment, continuous moderator</h3>
       <p>
-        Take the other canonical setup — $D$ binary, $X$ continuous. Here D-CAME is the
-        only quantity of interest, since comparing “at similar treatment intensities” is
-        redundant when there are only two intensities. However, taking non-linearities of the
-	moderator into account is still relevant to estimate the CAME function (see <a href="https://www.cambridge.org/core/journals/political-science-research-and-methods/article/problems-with-products-control-strategies-for-models-with-interaction-and-quadratic-effects/9108B4F38CB8759B55C4667D34A9738A" target="_blank"> Beiser-McGrath and Beiser-McGrath (2020)</a>).
+        Indeed, even though the aim of the paper is to explore average moderation effects, non-linearities in the moderation should be taken into account. Consider the other canonical setup --- $D$ binary, $X$ continuous.
+		  Here, D-CAME is the only quantity of interest, since comparing “at similar treatment intensities” is redundant when there are only two possible values of the treatment.
+		  However, taking non-linearities of the moderator into account is still relevant for estimating the CAME function (see <a href="https://www.cambridge.org/core/journals/political-science-research-and-methods/article/problems-with-products-control-strategies-for-models-with-interaction-and-quadratic-effects/9108B4F38CB8759B55C4667D34A9738A" target="_blank"> Beiser-McGrath and Beiser-McGrath (2020)</a>).
       </p>
 
 
@@ -146,27 +132,30 @@
         binning and kernel with a GAM, considering non-linearities with both, $D$ and $X$. 
       </p>
       <p>
-        Hainmueller, Liu, Liu, Mummolo and Xu (2025) reply that the critique never states
+        Hainmueller, Liu, Liu, Mummolo and Xu (2025; HLLMX) reply that the critique never states
         what &ldquo;the interactive effect&rdquo; means. They claim that the quantities of interest is the CAME,
-        $\theta(x) = E[\partial Y_i(d)/\partial d \mid X_i = x]$ — an average derivative,
+        $\theta(x) = E[\partial Y_i(d)/\partial d \mid X_i = x]$ --- an average derivative,
         marginalizing over $D$ and any covariates, conditional only on $X$. They show that the kernel approach 
 	that they propose provides unbiased estimates of CAME.
       </p>
       <p>
-         This discussion about different quantities of interest when testing interactions is what drives the first part of the paper. <a href="theory.html">Chapter
+        In the first part of the paper, I elaborate a bit on this discussion about different quantities of interest when testing interactions. <a href="theory.html">Chapter
         2</a> draws a line between the effect at the exposure a group actually has — an
         average over that group&rsquo;s own treatment distribution, the CAME, and the
         D-CAME across groups — and the effect at a common exposure, an average over one
         shared distribution, the AIPE.      </p>
       <p>
-        <strong>Then, if D-CAME is the QoI, is assuming non-linear moderator enough?</strong> 
-	The results in the paper suggest that not. For example, the simulation in <a href="theory.html">§2.5</a>
-        sets $X$ to a plain binary indicator, group 1 versus group 0. With only two
-        groups, the moderator is introduced "non-parametrically". This simulation shows that not considering
-	non-linearities in $D$ leads to biased estimates of D-CAME.
+        My reasoning when I started writing the paper in 2023 was much aligned with Simonsohn approach (even though I had not come about his work at that point). 
+		After reading the response by HMX and coauthors, I was compelled that probably CAME and D-CAME were also usueful quantities to be estimated.
+		At that point, the question was,  <strong> if D-CAME is the QoI, is assuming a non-linear moderator enough?</strong> According to the results of my paper, <strong> no. </strong> 
+		For example, the simulation in <a href="theory.html">§2.5</a> sets $X$ to a plain binary indicator, group 1 versus group 0. 
+		With only two groups, the moderator is introduced "non-parametrically". This simulation shows that not considering
+		non-linearities in $D$ leads to biased estimates of D-CAME.
       </p>
-            <p>
-        <strong>Then, why HMX and coauthors find that their kernel approach works?</strong> Two scenarios:
+			
+<p>
+       The next question is, <strong>then, why HMX and coauthors find that their kernel approach works?</strong> I contend that it is because of the distribution of $D$ that they assume.
+	To explore this, I consider two distributions:
       </p>
       <ul class="content-list">
         <li>
