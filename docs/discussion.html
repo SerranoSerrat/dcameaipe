@@ -229,64 +229,28 @@
 
 
       <p style="font-size:.92rem; color:#5b5b60;">
-        Two caveats, in fairness. The $\approx 0.2$ overshoot from
-        <code class="inline">dcame_aipe()</code> shows up in both designs, so it is not
-        the skew: with a continuous moderator the GAM path does not trim to common support
-        and evaluates both groups over the full observed range of $D$ (the
-        <code class="inline">"basis"</code> model trims instead). And the kernel is not
-        being misused here — it targets the CAME, which is what it was built for. The
-        point is narrower than "the kernel is biased": the CAME it recovers coincides with
-        the estimand only when $D \mid X$ is symmetric.
+        <strong>It is important to recognize that this is only suggestive simulation evidence; no formal proof has been provided. </strong>
+		 HMX are correct that the CAME is a well-defined estimand and that their kernel estimator targets it when $D$ is normally distributed.
+        This discussion adds a cautionary note that there may be cases where allowing for nonlinearities in the moderator is not sufficient.
+		When the treatment is plausibly skewed within moderator groups --- e.g., income, wealth, exposure measures, counts --- 
+		relaxing only the linearity assumptions  on the moderator may not be enough. 
+		Formal derivations are needed to better understand the conditions under which kernel estimates are unbiased.
       </p>
 
-      <div class="callout">
-        <strong>An implication to probe, not a verdict.</strong> HMX are right that the
-        CAME is a well-defined estimand and that their kernel estimator targets it; under
-        conditional symmetry it recovers it cleanly, as the normal design here confirms.
-        What this adds is a caution and an invitation. When the treatment is plausibly
-        skewed <em>within</em> moderator groups — income, wealth, exposure measures,
-        counts, anything bounded at zero, or bounded treatments where the moderator pushes
-        some groups against a floor or ceiling — relaxing non-linearity in the moderator
-        alone may not be enough, and modelling the treatment flexibly as well can matter
-        for the estimate. Whether it bites in a given application is an empirical question
-        that is cheap to check: plot $D$ within moderator bins and look at the shape. This
-        is one implication of the paper's logic worth investigating further — not a
-        settled result.
-      </div>
+
 
       <h2><span class="section-num">4.3</span>Controls, and what they do to the estimand</h2>
       <p>
-        The framework so far treats controls as bookkeeping: they enter additively, and the
-        estimands are defined over the raw distribution of the treatment. Both parts of that
-        deserve more than they currently get, and a future iteration will take them up
-        properly. Two threads.
+       So far, the controls enter additively into the specifications, and the estimands are defined over the raw distribution of the treatment. 
+		  Both parts deserve more attention than they currently receive, and in future iterations I will try to address them properly.
       </p>
       <p>
-        <strong>Controls change the population, not just the precision.</strong> Once
-        covariates and fixed effects are partialled out, the comparison being made is no
-        longer “group 1 versus group 0” but “group 1 versus group 0 <em>within</em> the same
-        country-year, the same region, the same covariate cell.” That is usually the right
-        comparison. But it means the distributional discrepancy $\Delta$ from
-        <a href="theory.html">§2.4</a> should be evaluated within that broader group as well:
-        the difference in treatment intensity that matters is the within-cell difference,
-        not the raw one. Two groups can look very differently exposed overall and nearly
-        identically exposed within country-year — in which case D-CAME and AIPE converge and
-        the whole distinction becomes moot. The reverse can also happen. Whether the
-        distinction bites is therefore a property of the specification, not only of the data.
-      </p>
-      <p>
-        <strong>Additive controls are an assumption.</strong> The models here assume $Z$ is
-        additively separable from $D$. When $D$ and $Z$ interact in the true DGP, the model
-        is misspecified and the OLS estimate of the $D$ slope becomes a variance-weighted
-        average of covariate-specific slopes, with weights proportional to the variance of
-        $D$ at each value of $Z$ — the Yitzhaki problem again, now in the covariates. This
-        matters most when the variance of $D$ differs sharply across covariate values. The
-        natural fix is to include $D \times Z$ and average predictions over the empirical
-        distribution of $Z$, marginalizing rather than conditioning. One caution: if
-        $D \times Z$ is included, $Z$ should not then be held fixed. Fixing it moves the
-        target toward a causal-interaction quantity — how treatment effects change under an
-        exogenous manipulation of $Z$ — which is a different estimand from the effect
-        heterogeneity considered here, and one requiring much stronger assumptions.
+        <strong>Controls may change the quantity of interest. <\strong>
+			Once the interaction between the treatment variable and other covariates is added, the comparison being made is no longer “group 1 versus group 0” 
+			but “group 1 versus group 0 within the same covariate cell.” That may not always be the correct comparison. 
+			But if this is the quantity of interest, the distributional discrepancy ($\Delta$) from <a href="theory.html">§2.4</a> 
+			should be evaluated within that covariate cell as well: the difference in treatment intensity that matters is the within-cell difference, 
+			not the raw one. Empirically, it should then be assessed how to partial out these covariate differences in the treatment effects and the distribution.
       </p>
 
       <h2><span class="section-num">4.4</span>Discrete multi-valued treatments</h2>
